@@ -20,6 +20,19 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_set_cookie_params(2678000);
 session_start();
 
+// Dynamically determine our protocol/host
+if (isset($_SERVER['HTTPS']) &&
+    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $protocol = 'https://';
+}
+else {
+  $protocol = 'http://';
+}
+$host  = $_SERVER['HTTP_HOST'];
+define('APP_ROOT', "$protocol$host");
+
 
 ?>
 <!doctype html>
@@ -95,14 +108,14 @@ if (!isset($_SESSION['url']))
           <p><br>Some examples of Mastobots made with this site:</p>
 	  <ul id="shuffle">
 	  <!-- <h3 style=>NONE YET.</h3> -->
-		<li><a href="https://botsin.space/@levels_check">@levels_check</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@levels_check">(source)</a></li>
-		<li><a href="https://botsin.space/@bodega">@bodega</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@bodega">(source)</a></li>
-		<li><a href="https://botsin.space/@bratsinspace">@bratsinspace</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@bratsinspace">(source)</a></li>
-		<li><a href="https://botsin.space/@thetinygallery">@thetinygallery</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@thetinygallery">(source)</a></li>
-		<li><a href="https://botsin.space/@EthanMarsDad">@EthanMarsDad</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@EthanMarsDad">(source)</a></li>
-		<li><a href="https://botsin.space/@robotrecipes">@robotrecipes</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@robotrecipes">(source)</a></li>
-		<li><a href="https://botsin.space/@undeadmerchant">@undeadmerchant</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@undeadmerchant">(source)</a></li>
-          <!--<li><a href="https://botsin.space/@AbhorrentSexBot">@AbhorrentSexBot</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@AbhorrentSexBot">(source)</a></li>-->
+		<li><a href="https://botsin.space/@levels_check">@levels_check</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@levels_check">(source)</a></li>
+		<li><a href="https://botsin.space/@bodega">@bodega</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@bodega">(source)</a></li>
+		<li><a href="https://botsin.space/@bratsinspace">@bratsinspace</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@bratsinspace">(source)</a></li>
+		<li><a href="https://botsin.space/@thetinygallery">@thetinygallery</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@thetinygallery">(source)</a></li>
+		<li><a href="https://botsin.space/@EthanMarsDad">@EthanMarsDad</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@EthanMarsDad">(source)</a></li>
+		<li><a href="https://botsin.space/@robotrecipes">@robotrecipes</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@robotrecipes">(source)</a></li>
+		<li><a href="https://botsin.space/@undeadmerchant">@undeadmerchant</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@undeadmerchant">(source)</a></li>
+          <!--<li><a href="https://botsin.space/@AbhorrentSexBot">@AbhorrentSexBot</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@AbhorrentSexBot">(source)</a></li>-->
           
           </ul>
 
@@ -328,7 +341,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
               echo('<option value="' . $sharevalue . '" '. ($result['public_source'] == $sharevalue ? 'selected' : '') .'>' . $sharelabel . '</option>');
             }
           ?> 
-          </select> Tracery source at <a target="_blank" href="/source/?url=<?php echo($result['url']) ?>"><?=TRACERYHOSTING_ROOT ?>/source/?url=<?php echo($result['url']) ?></a>.
+          </select> Tracery source at <a target="_blank" href="/source/?url=<?php echo($result['url']) ?>"><?=APP_ROOT ?>/source/?url=<?php echo($result['url']) ?></a>.
 
         </div>
     <br>

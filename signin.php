@@ -3,6 +3,7 @@
 require_once("MastodonOAuthPHP/autoload.php");
 require "credentials.php";
 
+// Dynamically determine our protocol/host, and generate OAUTH_CALLBACK uri
 if (isset($_SERVER['HTTPS']) &&
     ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
     isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
@@ -16,6 +17,7 @@ $host  = $_SERVER['HTTP_HOST'];
 $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 $extra = 'callback.php';
 define('OAUTH_CALLBACK', "$protocol$host$uri/$extra");
+define('APP_ROOT', "$protocol$host");
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
 
@@ -65,7 +67,7 @@ function create_new_app($instance_domain)
 
 	$connection = new \theCodingCompany\Mastodon($instance_domain);
 
-	$token_info = $connection->createApp("CheapBotsTootSweet","https://cheapbotstootsweet.com","https://cheapbotstootsweet.com/callback.php");
+	$token_info = $connection->createApp(TRACERYHOSTING_APP_NAME, APP_ROOT, OAUTH_CALLBACK);
 	$token_info['instance_domain'] = $instance_domain;
 
 	$stmt = $pdo->prepare('INSERT INTO instances (client_id,client_secret,domain) VALUES(:client_id, :client_secret, :domain)');

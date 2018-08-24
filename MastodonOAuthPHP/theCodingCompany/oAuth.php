@@ -48,10 +48,10 @@ trait oAuth
      * @var array
      */
     private $app_config = array(
-        "client_name"   => "TraceryHostingFork",
-        "redirect_uris" => "https://YOURDOMAIN.HERE/callback.php",
+        "client_name"   => "MastoTweet",
+        "redirect_uris" => "urn:ietf:wg:oauth:2.0:oob",
         "scopes"        => "read write",
-        "website"       => "https://YOURDOMAIN.HERE"
+        "website"       => "https://www.thecodingcompany.se"
     );
 
     /**
