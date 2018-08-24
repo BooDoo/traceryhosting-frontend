@@ -199,8 +199,9 @@ var generate_reply = function()
 	if (replyrules_valid && processedGrammar != null)
 	{
 		var mention = $('textarea#test_mention').val();
+		let username = _.last(url.split('/'));
 
-		if (mention.indexOf("@" + screen_name) == -1) //if we're not @ed
+		if (mention.indexOf(username) == -1) //if we're not @ed
 		{
 			$('#generated-reply').html("<i>Not mentioned</i>" + "<div id=\"reply-media\"></div>");
 		}
