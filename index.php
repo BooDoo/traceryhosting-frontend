@@ -101,6 +101,7 @@ if (!isset($_SESSION['url']))
 		<li><a href="https://botsin.space/@thetinygallery">@thetinygallery</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@thetinygallery">(source)</a></li>
 		<li><a href="https://botsin.space/@EthanMarsDad">@EthanMarsDad</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@EthanMarsDad">(source)</a></li>
 		<li><a href="https://botsin.space/@robotrecipes">@robotrecipes</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@robotrecipes">(source)</a></li>
+		<li><a href="https://botsin.space/@undeadmerchant">@undeadmerchant</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@undeadmerchant">(source)</a></li>
           <!--<li><a href="https://botsin.space/@AbhorrentSexBot">@AbhorrentSexBot</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@AbhorrentSexBot">(source)</a></li>-->
           
           </ul>
