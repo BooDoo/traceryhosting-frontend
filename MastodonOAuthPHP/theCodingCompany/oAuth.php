@@ -48,10 +48,10 @@ trait oAuth
      * @var array
      */
     private $app_config = array(
-        "client_name"   => "CheapBotsTootSweet",
-        "redirect_uris" => "https://cheapbotstootsweet.com/callback.php",
+        "client_name"   => "TraceryHostingFork",
+        "redirect_uris" => "https://YOURDOMAIN.HERE/callback.php",
         "scopes"        => "read write",
-        "website"       => "https://cheapbotstootsweet.com"
+        "website"       => "https://YOURDOMAIN.HERE"
     );
 
     /**
@@ -162,7 +162,7 @@ trait oAuth
      */
     public function getAccessToken($auth_code = ""){
         if(! (isset($this->app_config) && isset($this->app_config["redirect_uri"]) ) ) {
-		$redirect_uri = "https://cheapbotstootsweet.com/callback.php"; # "urn:ietf:wg:oauth:2.0:oob";
+		$redirect_uri = "https://YOURDOMAIN.HERE/callback.php"; # "urn:ietf:wg:oauth:2.0:oob";
 	} 
 	else {
 		$redirect_uri = $this->app_config["redirect_uri"];

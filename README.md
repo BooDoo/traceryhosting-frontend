@@ -21,4 +21,5 @@ If you can't tell by the fork info, this is all heavily based on [v21/traceryhos
   - [ ] Add {alt …} syntax and assign alt/title attributes accordingly
   - [ ] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
   - [ ] Branch/submit PR to [MastodonOAuthPHP](https://github.com/TheCodingCompany/MastodonOAuthPHP) with patches
+  - [ ] ...or at least don't hardcode values in the `MastodonOAuthPHP/theCodingCompany/oAuth.php` source...
   - [ ] translation/internationalization layer?
