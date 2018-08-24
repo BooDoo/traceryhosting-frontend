@@ -7,7 +7,18 @@ How to get set up developing on CBTS:
 - ensure the path to `node` in `credentials.php` is correct
 - if you want the Post! button to work, clone `https://github.com/BooDoo/traceryhosting-send_post`, run `npm update` to fetch the dependencies, and update the path to `send_post.js` to `credentials.php`
 - you can spin up a dev server with the builtin php server like so: `php -S localhost:8000`
+- now go check out [traceryhosting-backend](https://github.com/BooDoo/traceryhosting-backend)!
+  
+  
+If you can't tell by the fork info, this is all heavily based on [v21/traceryhosting-frontend](https://github.com/v21/traceryhosting-frontend)  
 
-- now go check out `https://github.com/BooDoo/traceryhosting-backend`!
-
-If you can't tell by the fork info, this is all heavily based on [v21/traceryhosting-frontend](https://github.com/v21/traceryhosting-frontend)
+# TODO:  
+  - [X] Support disparate Mastodon instances
+  - [X] Remove references to "tweet"s
+  - [ ] Change validation maximum characters to 500
+  - [ ] Count raw characters and ditch `twitter-text`?
+  - [ ] Add {cut …} syntax and display status accordingly
+  - [ ] Add {alt …} syntax and assign alt/title attributes accordingly
+  - [ ] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
+  - [ ] Branch/submit PR to [MastodonOAuthPHP](https://github.com/TheCodingCompany/MastodonOAuthPHP) with patches
+  - [ ] translation/internationalization layer?
