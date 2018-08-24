@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Cheap Bots, Done Quick!</title>
+        <title>Cheap Bots, Toot Sweet! -- Bot source</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -33,21 +33,25 @@ require "../credentials.php";
 
   /*
   The following function will strip the script name from URL i.e.  http://www.something.com/search/book/fitzgerald will become /search/book/fitzgerald
-  */
+  
   function getCurrentUri()
-  {
-    $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
-    $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
-    if (strstr($uri, '?')) $uri = substr($uri, 0, strpos($uri, '?'));
-    $uri = '/' . trim($uri, '/');
-    return $uri;
-  }
+  * {
+  *   $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
+  *   $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
+  *   if (strstr($uri, '?')) $uri = substr($uri, 0, strpos($uri, '?'));
+  *   $uri = '/' . trim($uri, '/');
+  *   return $uri;
+  * }
  
-  $base_url = getCurrentUri();
-  $routes = array();
-  $routes = explode('/', $base_url);
+  * $base_url = getCurrentUri();
+  * $routes = array();
+  * $routes = explode('/', $base_url);
 
-  $screen_name = $routes[1];
+  * $username = $routes[1];
+   */
+
+  // Instead of all that, we're taking it from the querystring
+  $url = $_GET['url'];
 
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
@@ -57,19 +61,19 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
 //we've got an account
-$stmt = $pdo->prepare('SELECT * FROM traceries WHERE screen_name = :screen_name');
+$stmt = $pdo->prepare('SELECT * FROM traceries WHERE url = :url');
 
-$stmt->execute(array('screen_name' => $screen_name));
+$stmt->execute(array('url' => $url));
 $result = $stmt->fetch(PDO::FETCH_ASSOC); 
 
-if ($screen_name === "")
+if ($url === "")
 {
   ?>
-  <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+  <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br>
         <div class="row">
       <div class="col-md-6 col-md-offset-3">
-      <p>Go to /source/<code>botname</code> to view the source for that bot (if available).</p>
+      <p>Go to /source/?url=<code>boturl</code> to view the source for that bot (if available).</p>
       </div>
     </div>
     <?php
@@ -77,11 +81,11 @@ if ($screen_name === "")
 elseif ($result['public_source'] != true)
 {
   ?>
-  <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+  <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br>
         <div class="row">
       <div class="col-md-6 col-md-offset-3">
-      <p>Could not find Tracery source for <b><?php echo($screen_name) ?></b> - that Twitter account may not exist, may not use CBDQ, or may not have chosen to share their source.</p>
+      <p>Could not find Tracery source for <b><?php echo($url) ?></b> - that account may not exist, may not use CBTS, or may not have chosen to share their source.</p>
       </div>
     </div>
     <?php
@@ -93,16 +97,16 @@ else
 
     <div class="container-fluid">
 
-    <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+    <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br>
         <div class="row">
       <div class="col-md-6 col-md-offset-3">
-          <p>This is the <a href="https://github.com/galaxykate/tracery">Tracery</a> source for the bot running at <?php echo('<a href="https://twitter.com/' . $result['screen_name']. '">') ?>@<?php echo($result['screen_name']) ?></a>. It currently tweets 
+      <p>This is the <a href="https://github.com/galaxykate/tracery">Tracery</a> source for the bot running at <a href="<?php echo($url) ?>">@<?php echo($result['username']) ?>@<?php echo($result['instance']) ?></a>. It currently posts 
           <?php 
           $frequencypossibilities = array(-1 => "never", 10 => "every 10 minutes", 30 => "every half hour", 60 => "every hour", 180 => "every 3 hours", 360 => "every 6 hours", 720 => "twice a day", 1440 => "once a day", 10080 => "once a week", 43829 => "once a month", 525949 => "once a year", 42 => "when run manually");
           echo($frequencypossibilities[$result['frequency']]);
         ?><?php echo($result['does_replies'] === "1"? " and replies to mentions":"")?>.</p>
-        <p>You can make your own bot, if you like. It's free and requires no specialized knowledge. To start, sign in with twitter <a href="/">here</a>.
+        <p>You can make your own bot, if you like. It's free and requires no specialized knowledge. To start, sign in with Mastodon <a href="/">here</a>.
       </div>
     </div>
     
@@ -125,10 +129,10 @@ else
     <div class="row">
     <div class="col-md-12">
       <div class="pull-right pad-left">
-    <button type="button" id="refresh-generated-tweet" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+    <button type="button" id="refresh-generated-status" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
     </div>
-      <div id="generated-tweet" style="overflow: auto;" class="well well-sm">-----
-        <div id="tweet-media"> 
+      <div id="generated-status" style="overflow: auto;" class="well well-sm">-----
+        <div id="status-media"> 
         </div>
       </div>
       
@@ -138,9 +142,9 @@ else
     
 
     <div class="form-group">
-        <span style="padding-left:20px">for</span> <?php echo('<a class="username" href="https://twitter.com/' . $result['screen_name']. '">') ?>
+        <span style="padding-left:20px">for</span> <?php echo('<a class="username" href="' . $result['url']. '">') ?>
           
-          <span class="username-text">@<?php echo($result['screen_name']) ?></span>
+	<span class="username-text">@<?php echo($result['username']) ?>@<?php echo($result['instance']) ?></span>
           </a>
         </div>
        
@@ -193,7 +197,7 @@ if ($result['does_replies'] === "1")
         <p>&copy; Company 2015</p>
       </footer>-->
     </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+<script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.11.2.min.js"><\/script>@<?php echo($result['instance']) ?>')</script>
 
         <script src="/js/vendor/bootstrap.min.js"></script>
 
@@ -203,7 +207,7 @@ if ($result['does_replies'] === "1")
         <script src="/js/json2.js"></script>
         <script src="/js/jsonlint.js"></script>
         <script src="/js/main.js"></script>
-        <script type="text/javascript">var screen_name = "<?php echo($result['screen_name'])?>"</script>
+        <script type="text/javascript">var url = "<?php echo($result['url'])?>"</script>
     </body>
 </html>
 

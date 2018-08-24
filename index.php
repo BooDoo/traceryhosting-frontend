@@ -1,15 +1,15 @@
 <?php
 
 
-require "twitteroauth/autoload.php";
+require_once("MastodonOAuthPHP/autoload.php");
 require "credentials.php";
 
-use Abraham\TwitterOAuth\TwitterOAuth;
-
-
-
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
-
+if (isset($_SESSION["instance_domain"])) {
+	$instance_domain = $_SESSION["instance_domain"];
+}
+else {
+	$instance_domain = 'botsin.space';
+}
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
 
@@ -30,12 +30,12 @@ session_start();
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Cheap Bots, Done Quick!</title>
+        <title>Cheap Bots, Toot Sweet!</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
         <style>
             body {
                 /*padding-top: 50px;*/
@@ -46,57 +46,62 @@ session_start();
         <link rel="stylesheet" href="css/main.css">
 		<link href='//fonts.googleapis.com/css?family=Yesteryear' rel='stylesheet' type='text/css'>
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="js/underscore-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" async></script>
     </head>
     <body>
-
 <?php
-if (!isset($_SESSION['user_id']))
+if (!isset($_SESSION['url']))
 {
   ?>
 
     <div class="container-fluid">
 
-        <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+        <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br><br>
         <div class="row">
 		  <div class="col-md-6 col-md-offset-3">
 		  
-      <p>This site will help you make a Twitterbot! They're easy to make and free to run.
+      <p>This site will help you make a Mastobot! They're easy to make and free (for you) to run.
       </p>
 
-		  <p>To use it, <a href="https://twitter.com/signup">create a Twitter account</a> for your bot to run under and then sign in below. 
-		  The bots are written in <a href="http://www.brightspiral.com">Tracery</a>, a tool for writing generative grammars developed by <a href="http://www.galaxykate.com/">Kate Compton</a>. This site is run by <a href="https://v21.io">George Buckenham</a> - they can be contacted at <a href="mailto:vtwentyone@gmail.com">vtwentyone@gmail.com</a>. You can support this site on <a href="https://www.patreon.com/v21">Patreon</a>.</p>
+		  <p>To use this, create an account for your bot to use on a bot-friendly Mastodon instance (such as <a href="https://botsin.space/auth/sign_up">botsin.space</a>) then fill in your instance down below to get started. If you're having trouble with a particular instance, feel free to let me know at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.<br><br> 
+		  Bots are written in <a href="http://www.brightspiral.com">Tracery</a>, a tool for writing generative grammars developed by <a href="http://www.galaxykate.com/">Kate Compton</a>.<br>
+                  The original <a href="https://cheapbotsdonequick.com/">CheapBotsDoneQuick.com</a> was created by <a href="https://v21.io">George Buckenham</a> - they have <a href="https://www.patreon.com/v21">a Patreon</a>, I do not.</p>
 		  </p>
 		  </div>
 		</div>
 		
         <br><br>
-		<div class="row">
-		  <div class="center-block">
-			<a href="signin.php"><img src="img/sign-in-with-twitter-gray.png" class="center-block"></a>
-		  </div>
-		</div>
-
-        <br><br>
+	<div class="col-md-6 col-md-offset-3 form-inline">
+	    <div class="form-group">
+	        <label for="instance-domain">https://</label>
+	        <input value="" placeholder="botsin.space" list="instance-domains" id="instance-domain" class="form-control" type="text">
+	        <datalist id="instance-domains">
+		<?php
+			$domains = $pdo->query('SELECT domain FROM instances')->fetchAll();
+			foreach ($domains as $n => $row) { echo ("         <option>{$row['domain']}</option>\n"); }
+		?>
+	        </datalist>
+	        <a href="#" onclick="this.href='/signin.php?instance_domain='+(document.getElementById('instance-domain').value || 'botsin.space'); return true;">
+	            <button class="btn btn-default" id="signin-button">
+        	       Continue with Mastodon
+	            </button>
+	        </a>
+	    </div>
+	</div>
+	<br><br>
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
-          Some examples of twitterbots made with this site:
-          <ul id="shuffle">
-          <li><a href="https://twitter.com/hashfacade">@hashfacade</a> <a href="//cheapbotsdonequick.com/source/hashfacade">(source)</a></li>
-          <li><a href="https://twitter.com/gnuerror">@gnuerror</a> <a href="//cheapbotsdonequick.com/source/gnuerror">(source)</a></li>
-          <li><a href="https://twitter.com/unicode_garden">@unicode_garden</a> <a href="//cheapbotsdonequick.com/source/unicode_garden">(source)</a></li>
-          <li><a href="https://twitter.com/softlandscapes">@softlandscapes</a> <a href="//cheapbotsdonequick.com/source/softlandscapes">(source)</a></li>
-          <li><a href="https://twitter.com/thetinygallery">@thetinygallery</a> <a href="//cheapbotsdonequick.com/source/thetinygallery">(source)</a></li>
-          <li><a href="https://twitter.com/bot_teleport">@bot_teleport</a> <a href="//cheapbotsdonequick.com/source/bot_teleport">(source)</a></li>
-          <li><a href="https://twitter.com/autoflaneur">@autoflaneur</a> <a href="//cheapbotsdonequick.com/source/autoflaneur">(source)</a></li>
-          <li><a href="https://twitter.com/lotsofeyes">@lotsofeyes</a> <a href="//cheapbotsdonequick.com/source/lotsofeyes">(source)</a></li>
-          <li><a href="https://twitter.com/thinkpiecebot">@thinkpiecebot</a></li>
-          <li><a href="https://twitter.com/infinitedeserts">@infinitedeserts</a></li>
-          <li><a href="https://twitter.com/FoleyArtists">@FoleyArtists</a> <a href="//cheapbotsdonequick.com/source/FoleyArtists">(source)</a></li>
-          <li><a href="https://twitter.com/What_Hastings">@What_Hastings</a></li>
-          <li><a href="https://twitter.com/petitsmotifs">@petitsmotifs</a></li>
-          <!--<li><a href="https://twitter.com/AbhorrentSexBot">@AbhorrentSexBot</a></li>-->
+          <p><br>Some examples of Mastobots made with this site:</p>
+	  <ul id="shuffle">
+	  <!-- <h3 style=>NONE YET.</h3> -->
+		<li><a href="https://botsin.space/@levels_check">@levels_check</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@levels_check">(source)</a></li>
+		<li><a href="https://botsin.space/@bodega">@bodega</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@bodega">(source)</a></li>
+		<li><a href="https://botsin.space/@bratsinspace">@bratsinspace</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@bratsinspace">(source)</a></li>
+		<li><a href="https://botsin.space/@thetinygallery">@thetinygallery</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@thetinygallery">(source)</a></li>
+		<li><a href="https://botsin.space/@EthanMarsDad">@EthanMarsDad</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@EthanMarsDad">(source)</a></li>
+		<li><a href="https://botsin.space/@robotrecipes">@robotrecipes</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@robotrecipes">(source)</a></li>
+          <!--<li><a href="https://botsin.space/@AbhorrentSexBot">@AbhorrentSexBot</a> <a href="//<?=TRACERYHOSTING_ROOT ?>/source/?url=https://botsin.space/@AbhorrentSexBot">(source)</a></li>-->
           
           </ul>
 
@@ -130,9 +135,9 @@ die();
 
 }
 //we've got an account
-$stmt = $pdo->prepare('SELECT * FROM traceries WHERE user_id = :user_id');
+$stmt = $pdo->prepare('SELECT * FROM traceries WHERE url = :url');
 
-$stmt->execute(array('user_id' => $_SESSION['user_id']));
+$stmt->execute(array('url' => $_SESSION['url']));
 $result = $stmt->fetch(PDO::FETCH_ASSOC); 
 
 //todo handle failing to find user
@@ -142,20 +147,17 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 	
 ?>
 
-
-
-
     <div class="container-fluid">
 
-    <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+    <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br>
         <div class="row">
 		  <div class="col-md-8 col-md-offset-2">
-          <p>Bots are written in <a href="http://brightspiral.com/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then tweet it on a fixed schedule. If it generates a duplicate tweet, or a tweet over 280 characters, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
+          <p>Bots are written in <a href="http://brightspiral.com/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then post it on a fixed schedule. If it generates a duplicate status, or a status over 280 characters, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
 
-          <p>You can also include images in your tweets. The simplest way to do this is to specify a URL, like so <code>{img https://placeimg.com/640/480/animals/image.jpg}</code>. Alternatively, to generate an image within CBDQ, you can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVGs</a>. A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>. The syntax looks like this: <code>{svg  &lt;svg ...&gt; ... &lt;/svg&gt;}</code>. SVGs will need to specify a <code>width</code> and <code>height</code> attribute. Note that <code>"</code>s within SVG files need to be escaped as <code>\"</code>, as does <code>#</code>s (<code>\\#</code>). <code>{</code>s and <code>}</code>s can be escaped as <code>\\\\{</code> and <code>\\\\}</code>. </p>
+          <p>You can also include images in your stauses. The simplest way to do this is to specify a URL, like so <code>{img https://placeimg.com/640/480/animals/image.jpg}</code>. Alternatively, to generate an image within CBDQ, you can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVGs</a>. A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>. The syntax looks like this: <code>{svg  &lt;svg ...&gt; ... &lt;/svg&gt;}</code>. SVGs will need to specify a <code>width</code> and <code>height</code> attribute. Note that <code>"</code>s within SVG files need to be escaped as <code>\"</code>, as does <code>#</code>s (<code>\\#</code>). <code>{</code>s and <code>}</code>s can be escaped as <code>\\\\{</code> and <code>\\\\}</code>. </p>
 
-          <p>If you create a bot I deem abusive or otherwise unpleasant (for example, @mentioning people who have not consented, posting insults or using slurs) I will take it down. If you have any questions, bug reports or comments then you can reach me at <a href="https://twitter.com/v21">@v21</a> or at <a href="mailto:vtwentyone@gmail.com">vtwentyone@gmail.com</a></p>
+          <p>If you create a bot I, or people I trust, find abusive or otherwise unpleasant I reserve the right to terminate it. If you have any questions, bug reports or comments you can reach me at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or at <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.</p>
 		  <ul>
         <li><a href="http://air.decontextualize.com/tracery/">Tracery tutorial</a></li>
   		  <li><a href="http://www.crystalcodepalace.com/traceryTut.html">Interactive tutorial</a></li>
@@ -164,7 +166,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
   		  <li><a href="https://github.com/v21/tracerybot">Example of a self-hosted bot running on Tracery</a></li>
 		  </ul>
 		  <p>
-        If you would like to help pay for server costs, maintenance and further development of this service, you can do so by <a href="https://www.patreon.com/v21">supporting Cheap Bots, Done Quick! on Patreon</a>. Happy botting!
+        If you would like to help pay for server costs, maintenance and further development of this service, don't worry about it. Happy botting!
       </p>
       <p></p>
 		  </div>
@@ -180,7 +182,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if (is_null($result['tracery']))
         {
         	echo('{
-	"origin": ["this could be a tweet", "this is #alternatives# tweet", "#completely different#"],
+	"origin": ["this could be a status", "this is #alternatives# status", "#completely different#"],
 	"alternatives" : ["an example", "a different", "another", "a possible", "a generated", "your next"],
 	"completely different" : ["and now for something completely different", "so long and thanks for all the fish", "or, maybe, #alternatives# badger"]
 }
@@ -199,11 +201,11 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
     <div class="row">
     <div class="col-md-12">
     	<div class="pull-right pad-left">
-		<button type="button" id="refresh-generated-tweet" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-	 	<button type="button" id="tweet-generated-tweet" class="btn btn-tweet">Tweet</button>
+		<button type="button" id="refresh-generated-status" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+		<button type="button" id="post-generated-status" class="btn btn-post">Post!</button>
 		</div>
-	  	<div id="generated-tweet" style="overflow: auto;" class="well well-sm">-----
-        <div id="tweet-media"> 
+	  	<div id="generated-status" style="overflow: auto;" class="well well-sm">-----
+        <div id="status-media"> 
         </div>
       </div>
 	  	
@@ -223,12 +225,33 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
     </div>
 
     <div class="form-group">
-        post a tweet as <?php echo('<a class="username" href="https://twitter.com/' . $result['screen_name']. '">') ?>
+        post a status as <?php echo('<a class="username" href="'. $result['url']. '">') ?>
 	        <?php echo('<img src="' . $_SESSION['profile_pic'] . '" width=32> '); ?>
-	        <span class="username-text"><?php echo($result['screen_name']) ?></span>
+	        <span class="username-text"><?php echo($result['username']) ?></span>
+	        </a>
+    </div>
+<!--    <br> -->
+<!-- TODO: Un-hide these once I've figured out the ALT/CUT tags... -->
+    <div class="form-group" style="display:none">
+        
+	    <select class="form-control" id="is_sensitive" name="is_sensitive">
+	    	<?php 
+	    		$sensitivepossibilities = array(0 => "Innocuous", 1 => "Sensitive");
+	    		foreach ($sensitivepossibilities as $sensitivevalue => $sensitivelabel) {
+	    			echo('<option value="' . $sensitivevalue . '" '. ($result['is_sensitive'] == $sensitivevalue ? 'selected' : '') .'>' . $sensitivelabel . '</option>');
+	    		}
+	    	?>
+		</select>
+    </div>
+
+    <div class="form-group" style="display:none">
+        media is posted as <?php echo('<a class="username" href="'. $result['url']. '">') ?>
+	        <?php echo('<img src="' . $_SESSION['profile_pic'] . '" width=32> '); ?>
+	        <span class="username-text"><?php echo($result['username']) ?></span>
 	        </a>
     </div>
     <br>
+<!-- try again tomorrow, kid. /TODO -->
 
     <div class="form-group">
           <select class="form-control" id="does_replies" name="does_replies">
@@ -239,10 +262,10 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
               echo('<option value="' . $replyvalue . '" '. ($result['does_replies'] == $replyvalue ? 'selected' : '') .'>' . $replylabel . '</option>');
             }
           ?> 
-          </select> to tweets sent to <?php echo('<a class="username" href="https://twitter.com/' . $result['screen_name']. '">') ?>
+          </select> to statuses sent to <?php echo('<a class="username" href="' . $result['url']. '">') ?>
           <?php echo('<img src="' . $_SESSION['profile_pic'] . '" width=32> '); ?>
-          <span class="username-text"><?php echo($result['screen_name']) ?></span>
-          </a>.
+          <span class="username-text"><?php echo($result['username']) ?></span>
+          </a>
 
         </div>
 
@@ -280,7 +303,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 </textarea>
 </div>
     <div id="replyrules-validator" class="alert alert-danger hidden" role="alert">Parsing error</div>
-      Test mention: <textarea class="form-control" rows="1" id="test_mention" name="test_mention">@<?php echo($result['screen_name']) ?> </textarea>
+      Test mention: <textarea class="form-control" rows="1" id="test_mention" name="test_mention">@<?php echo($result['username']) ?> </textarea>
       <div class="pull-right pad-left"><br>
     <button type="button" id="refresh-generated-reply" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
       </div>
@@ -304,7 +327,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
               echo('<option value="' . $sharevalue . '" '. ($result['public_source'] == $sharevalue ? 'selected' : '') .'>' . $sharelabel . '</option>');
             }
           ?> 
-          </select> Tracery source at <a target="_blank" href="/source/<?php echo($result['screen_name']) ?>">cheapbotsdonequick.com/source/<?php echo($result['screen_name']) ?></a>.
+          </select> Tracery source at <a target="_blank" href="/source/?url=<?php echo($result['url']) ?>"><?=TRACERYHOSTING_ROOT ?>/source/?url=<?php echo($result['url']) ?></a>.
 
         </div>
     <br>
@@ -331,14 +354,14 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
-
+	<script src="js/underscore-min.js"></script>
         <script src="js/tracery.js"></script>
         <script src="js/twitter-text-1.9.4.min.js"></script>
         <script src="js/expanding.js"></script>
         <script src="js/json2.js"></script>
         <script src="js/jsonlint.js"></script>
         <script src="js/main.js"></script>
-        <script type="text/javascript">var screen_name = "<?php echo($result['screen_name'])?>"</script>
+        <script type="text/javascript">var url = `<?php echo($result['url'])?>`</script>
     </body>
 </html>
 

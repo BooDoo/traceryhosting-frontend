@@ -1,11 +1,21 @@
 <?php
 
-require "twitteroauth/autoload.php";
-
-use Abraham\TwitterOAuth\TwitterOAuth;
-
+require "MastodonOAuthPHP/autoload.php";
+require "credentials.php";
 
 session_start();
+
+if (isset($_SESSION["instance_domain"])) {
+	$instance_domain = $_SESSION["instance_domain"];
+}
+else {
+	$instance_domain = 'botsin.space';
+}
+
+$pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
+
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 //destroy the session
 
@@ -30,7 +40,7 @@ session_destroy();
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <title>Cheap Bots, Toot Sweet -- Logged Out</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -56,17 +66,29 @@ session_destroy();
 <div class="alert alert-info" role="alert">Successfully logged out</div>
 
         <br><br>
-        <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
+        <h1 class="header text-center cursive">Cheap Bots, Toot Sweet!</h1>
         <br><br>
 
         
 		
         <br><br>
-		<div class="row">
-		  <div class="center-block">
-			<a href="signin.php"><img src="img/sign-in-with-twitter-gray.png" class="center-block"></a>
-		  </div>
-		</div>
+	<div class="col-md-6 col-md-offset-3 form-inline">
+	    <div class="form-group">
+	        <label for="instance-domain">https://</label>
+	        <input value="" placeholder="botsin.space" list="instance-domains" id="instance-domain" class="form-control" type="text">
+	        <datalist id="instance-domains">
+		<?php
+			$domains = $pdo->query('SELECT domain FROM instances')->fetchAll();
+			foreach ($domains as $n => $row) { echo ("         <option>{$row['domain']}</option>\n"); }
+		?>
+	        </datalist>
+	        <a href="#" onclick="this.href='/signin.php?instance_domain='+(document.getElementById('instance-domain').value || 'botsin.space'); return true;">
+	            <button class="btn btn-default" id="signin-button">
+        	       Continue with Mastodon
+	            </button>
+	        </a>
+	    </div>
+	</div>
 
 
 <!--

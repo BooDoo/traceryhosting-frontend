@@ -1,11 +1,13 @@
 <?php
 
-require "twitteroauth/autoload.php";
+require_once("MastodonOAuthPHP/autoload.php");
 require "credentials.php";
 
-use Abraham\TwitterOAuth\TwitterOAuth;
+session_set_cookie_params(2678000);
+session_start();
 
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
+$instance_domain = $_SESSION['instance_domain'];
+parse_str( $_SERVER['QUERY_STRING'], $get_params);
 
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
@@ -13,9 +15,11 @@ $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tr
 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-session_set_cookie_params(2678000);
-session_start();
+$stmt = $pdo->prepare("SELECT client_id,client_secret FROM instances WHERE domain=:instance_domain");
+$stmt->execute(array(
+	'instance_domain' => $instance_domain
+));
+$res = $stmt->fetch();
 
 function login_failure()
 {
@@ -30,82 +34,71 @@ function login_failure()
     }
 
     session_destroy();
-    die('Error! Couldn\'t log in. <a href="//cheapbotsdonequick.com">Retry</a>');
+    die('Error! Couldn\'t log in. <a href="/">Retry</a>');
 }
 
-
-$request_token = array();
-$request_token['oauth_token'] = $_SESSION['oauth_token'];
-$request_token['oauth_token_secret'] = $_SESSION['oauth_token_secret'];
-
-if ((isset($_REQUEST['oauth_token']) && $request_token['oauth_token'] !== $_REQUEST['oauth_token']) 
-  || (isset($_GET['denied'])) 
-  || !isset($_GET['oauth_token'])) {
-    // Abort! Something is wrong.
-
-
-
+if ( (!isset($_GET['code']) || !isset($res)) ) {
+	// Abort! Something is wrong.
+    echo("Can't get code {$_GET['code']} or empty db res.\n\n");
     login_failure();
 }
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $request_token['oauth_token'], $request_token['oauth_token_secret']);
-$access_token = $connection->oauth("oauth/access_token", array("oauth_verifier" => $_REQUEST['oauth_verifier']));
 
-if (!(isset($access_token["oauth_token"])) || !(isset($access_token["oauth_token_secret"])))
+$auth_code = $_GET['code'];	
+$connection = new \theCodingCompany\Mastodon($instance_domain);
+$connection->setCredentials(array(
+	"client_id" => $res['client_id'],
+	"client_secret" => $res['client_secret']
+));
+$bearer_token = $connection->getAccessToken($auth_code);
+
+if ($bearer_token == false)
 {
+  echo("Failed to get bearer token from {$instance_domain}.\n\n");
   login_failure();
 }
 
-//todo verify that we succeeded
+$connection->setCredentials(array("bearer"=>$bearer_token));
+$user_data = $connection->getUser();
+$stmt = $pdo->prepare('INSERT INTO traceries (bearer, username, instance, acct, id, url) VALUES(:bearer, :username, :instance, :acct, :id, :url) ON DUPLICATE KEY UPDATE bearer=:bearer2, username=:username2, instance=:instance2, acct=:acct2, id=:id2, url=:url2');
+
+$stmt->execute(array(   'bearer' => $bearer_token, 
+			'username' => $user_data["username"],
+			'instance' => $instance_domain,
+		        'acct' => $user_data["acct"], 
+		        'id' => $user_data["id"],
+		        'url' => $user_data["url"],
+			'bearer2' => $bearer_token, 
+			'username2' => $user_data["username"],
+			'instance2' => $instance_domain,
+		        'acct2' => $user_data["acct"], 
+		        'id2' => $user_data["id"],
+		        'url2' => $user_data["url"],
+                    ));
 
 
-//var_dump($access_token);
+$_SESSION['bearer_token'] = $bearer_token;
+$_SESSION['acct'] = $user_data["acct"];
+$_SESSION['profile_pic'] = $user_data["avatar_static"]; 
+$_SESSION['username'] =  $user_data["username"]; 
+$_SESSION['id'] = $user_data["id"];
+$_SESSION['url'] = $user_data["url"];
 
-//die();
-
-
-
-  $stmt = $pdo->prepare('INSERT INTO traceries (token,token_secret, screen_name, user_id) VALUES(:token, :token_secret, :screen_name, :user_id) ON DUPLICATE KEY UPDATE token=:token2, token_secret=:token_secret2, screen_name=:screen_name2, user_id=:user_id2');
-
-  $stmt->execute(array('token' => $access_token["oauth_token"], 
-                       'token_secret' => $access_token["oauth_token_secret"], 
-                       'screen_name' => $access_token["screen_name"],
-                       'token2' => $access_token["oauth_token"], 
-                       'token_secret2' => $access_token["oauth_token_secret"], 
-                       'screen_name2' => $access_token["screen_name"],
-                       'user_id' => $access_token["user_id"],
-                       'user_id2' => $access_token["user_id"]
-                      ));
-
-
-
-
-$_SESSION['oauth_token'] = $access_token["oauth_token"]; //this should be this already?
-
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
-$user_data = $connection->get("users/show", array("screen_name" => $access_token["screen_name"]));
-
-$_SESSION['profile_pic'] = $user_data->profile_image_url; 
-$_SESSION['screen_name'] =  $access_token["screen_name"]; 
-$_SESSION['user_id'] = $access_token["user_id"];
-
-if (!(isset($user_data) || !(isset($user_data->profile_image_url))))
+if (!(isset($user_data) || !(isset($user_data['url']))))
 {
-  login_failure(); 
+	login_failure(); 
 }
 if (isset($_SERVER['HTTPS']) &&
-    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
-    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-  $protocol = 'https://';
+	($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+	isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+	$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+	$protocol = 'https://';
 }
 else {
-  $protocol = 'http://';
-}
+	$protocol = 'http://';
+	}
 $host  = $_SERVER['HTTP_HOST'];
 $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 header("Location: $protocol$host$uri");
 die();
 
-
 ?>
-

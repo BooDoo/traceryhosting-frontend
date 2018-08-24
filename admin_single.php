@@ -45,7 +45,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != ADMIN_USER_ID)
 
 <?php
 
-$screen_name = $_GET["screen_name"];
+$username = $_GET["username"];
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD);
 
@@ -54,12 +54,12 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
 //we've got an account
-$stmt = $pdo->prepare('SELECT * FROM traceries WHERE screen_name = :screen_name');
+$stmt = $pdo->prepare('SELECT * FROM traceries WHERE username = :username');
 
-$stmt->execute(array('screen_name' => $screen_name));
+$stmt->execute(array('username' => $username));
 $result = $stmt->fetch(PDO::FETCH_ASSOC); 
 
-if ($screen_name === "")
+if ($username === "")
 {
   ?>
   <h1 class="header text-center cursive">Cheap Bots, Done Quick!</h1>
@@ -81,12 +81,12 @@ else {
         <br>
         <div class="row">
       <div class="col-md-6 col-md-offset-3">
-          <p>This is the <a href="https://github.com/galaxykate/tracery">Tracery</a> source for the bot running at <?php echo('<a href="https://twitter.com/' . $result['screen_name']. '">') ?>@<?php echo($result['screen_name']) ?></a>. It currently tweets 
+          <p>This is the <a href="https://github.com/galaxykate/tracery">Tracery</a> source for the bot running at <?php echo('<a href="' . $result['url'] . '">') ?>@<?php echo($result['username']) ?></a>. It currently posts 
           <?php 
           $frequencypossibilities = array(-1 => "never", 10 => "every 10 minutes", 30 => "every half hour", 60 => "every hour", 180 => "every 3 hours", 360 => "every 6 hours", 720 => "twice a day", 1440 => "once a day", 10080 => "once a week", 43829 => "once a month", 525949 => "once a year", 42 => "when run manually");
           echo($frequencypossibilities[$result['frequency']]);
         ?><?php echo($result['does_replies'] === "1"? " and replies to mentions":"")?>.</p>
-        <p>You can make your own bot, if you like. It's free and requires no specialized knowledge. To start, sign in with twitter <a href="/">here</a>.
+        <p>You can make your own bot, if you like. It's free and requires no specialized knowledge. To start, sign in with Mastodon <a href="/">here</a>.
       </div>
     </div>
     
@@ -109,10 +109,10 @@ else {
     <div class="row">
     <div class="col-md-12">
       <div class="pull-right pad-left">
-    <button type="button" id="refresh-generated-tweet" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+    <button type="button" id="refresh-generated-status" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
     </div>
-      <div id="generated-tweet" style="overflow: auto;" class="well well-sm">-----
-        <div id="tweet-media"> 
+      <div id="generated-status" style="overflow: auto;" class="well well-sm">-----
+        <div id="status-media"> 
         </div>
       </div>
       
@@ -122,10 +122,9 @@ else {
     
 
     <div class="form-group">
-        <span style="padding-left:20px">for</span> <?php echo('<a class="username" href="https://twitter.com/' . $result['screen_name']. '">') ?>
-          
-          <span class="username-text">@<?php echo($result['screen_name']) ?></span>
-          </a>
+	<span style="padding-left:20px">for</span> <?php echo('<a class="username" href="'. $result['url']. '">') ?>
+	        <span class="username-text"><?php echo($result['username']) ?></span>
+        </a>
         </div>
        
 </div>
@@ -187,7 +186,7 @@ if ($result['does_replies'] === "1")
         <script src="/js/json2.js"></script>
         <script src="/js/jsonlint.js"></script>
         <script src="/js/main.js"></script>
-        <script type="text/javascript">var screen_name = "<?php echo($result['screen_name'])?>"</script>
+        <script type="text/javascript">var username = "<?php echo($result['username'])?>"</script>
     </body>
 </html>
 

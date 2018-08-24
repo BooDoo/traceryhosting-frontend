@@ -15,6 +15,10 @@ $('#public_source').change(function() {
 	changeSaveButtonColour();
 });
 
+$('#is_sensitive').change(function() {
+	unsaved = true;
+	changeSaveButtonColour();
+});
 
 $('#does_replies').change(function() {
 	unsaved = true;
@@ -64,7 +68,7 @@ $( "#refresh-generated-reply" ).bind( "click", function() {
 
 
 
-$( "#refresh-generated-tweet" ).bind( "click", function() {
+$( "#refresh-generated-status" ).bind( "click", function() {
   generate();
 });
 
@@ -211,7 +215,7 @@ var generate_reply = function()
 
 
 			var media = matchBrackets(reply);
-			var just_text_tweet = removeBrackets(reply);
+			var just_text_status = removeBrackets(reply);
 
 			if (reply == "")
 			{
@@ -219,11 +223,11 @@ var generate_reply = function()
 			}
 			else
 			{
-				$('#generated-reply').html(nl2br(_.escape(just_text_tweet)) + "<div id=\"reply-media\"></div>");
+				$('#generated-reply').html(nl2br(_.escape(just_text_status)) + "<div id=\"reply-media\"></div>");
 			}
 
 
-			if (twttr.txt.getTweetLength(just_text_tweet) > 280)
+			if (twttr.txt.getTweetLength(just_text_status) > 500)
 			{
 				$('#generated-reply').addClass('too-long');
 			}
@@ -261,6 +265,14 @@ var generate_reply = function()
 					$('#reply-media').append("<div class=\"svg-media\"> <img src=\"" + url + "\"></div>");
 
 				}
+				else if (media.indexOf("cut ") === 1)
+				{
+					console.log(`Will try a content warning labeled: ${media.substr(5)}`);
+				}
+				else if (media.indexOf("alt ") === 1)
+				{
+					console.log(`Will assign media alt text of: ${media.substr(5)}`);
+				}
 				else
 				{
 					$('#replyrules-validator').removeClass('hidden').text("Unknown media type " + media.substr(1,4));
@@ -278,7 +290,7 @@ var generate_reply = function()
 generate_reply = _.throttle(generate_reply, 500);
 
 
-var tweet; //global so we can see it when we press the tweet button
+var status; //global so we can see it when we press the Post! button
 var processedGrammar; //global so it can be used for replies
 var generate = function()
 {
@@ -295,22 +307,22 @@ var generate = function()
 			processedGrammar = tracery.createGrammar(parsed);
 
 			processedGrammar.addModifiers(tracery.baseEngModifiers);
-			tweet = processedGrammar.flatten("#origin#");
+			status = processedGrammar.flatten("#origin#");
 
-			var media = matchBrackets(tweet);
-			var just_text_tweet = removeBrackets(tweet);
-			$('#generated-tweet').html(nl2br(_.escape(just_text_tweet)) + "<div id=\"tweet-media\"></div>");
+			var media = matchBrackets(status);
+			var just_text_status = removeBrackets(status);
+			$('#generated-status').html(nl2br(_.escape(just_text_status)) + "<div id=\"status-media\"></div>");
 
-			if (twttr.txt.getTweetLength(just_text_tweet) > 280)
+			if (twttr.txt.getTweetLength(just_text_status) > 500)
 			{
-				$('#generated-tweet').addClass('too-long');
+				$('#generated-status').addClass('too-long');
 
-				$('#tweet-generated-tweet').attr('disabled','disabled').addClass('disabled');
+				$('#post-generated-status').attr('disabled','disabled').addClass('disabled');
 			}
 			else
 			{
-				$('#generated-tweet').removeClass('too-long');
-				$('#tweet-generated-tweet').removeAttr('disabled').removeClass('disabled');
+				$('#generated-status').removeClass('too-long');
+				$('#post-generated-status').removeAttr('disabled').removeClass('disabled');
 			}
  
 
@@ -332,13 +344,21 @@ var generate = function()
 				    validateSVG(doc, actualSVG);
 
 
-					$('#tweet-media').append("<div class=\"svg-media\">" + actualSVG + "</div>");
+					$('#status-media').append("<div class=\"svg-media\">" + actualSVG + "</div>");
 				}
 				else if (media.indexOf("img ") === 1)
 				{
 					var url = media.substr(5,media.length - 6);
 
-					$('#tweet-media').append("<div class=\"svg-media\"> <img src=\"" + url + "\"></div>");
+					$('#status-media').append("<div class=\"svg-media\"> <img src=\"" + url + "\"></div>");
+				}
+				else if (media.indexOf("cut ") === 1)
+				{
+					console.log(`Will try a content warning labeled: ${media.substr(5, media.length - 6)}`);
+				}
+				else if (media.indexOf("alt ") === 1)
+				{
+					console.log(`Will assign media alt text of: ${media.substr(5, media.length - 6)}`);
 				}
 				else
 				{
@@ -471,27 +491,27 @@ var changeSaveButtonColour = function()
 	else $('#save-button').removeClass('btn-primary').addClass('btn-default');
 };
 
-$('#tweet-generated-tweet').click(function()
+$('#post-generated-status').click(function()
 {
 	$.ajax({
-	  url: "tweet.php",
+	  url: "post.php",
 	  method : "POST",
-	  data : {"tweet": tweet},
+	  data : {"status": status},
 	  dataType: "json"	  
 	})
 	  .done(function( data ) {
 		if (data.hasOwnProperty('success') && data['success'])
 		{
 
-			$('#tweet-generated-tweet').attr('disabled','disabled').addClass('disabled');
+			$('#post-generated-status').attr('disabled','disabled').addClass('disabled');
 			$('#tracery-validator').addClass('hidden');
 		}
 		else {
-			$('#tracery-validator').removeClass('hidden').text("Failed to tweet: " + (data.hasOwnProperty('reason') && data['reason']));
+			$('#tracery-validator').removeClass('hidden').text("Failed to post: " + (data.hasOwnProperty('reason') && data['reason']));
 		}
 	  })
 	  .fail( function( jqXHR, textStatus ) {
-			$('#tracery-validator').removeClass('hidden').text("Failed to tweet: " + textStatus);
+			$('#tracery-validator').removeClass('hidden').text("Failed to post: " + textStatus);
 		});
 });
 
@@ -520,12 +540,13 @@ var save = function()
 	var freq = $('#frequency').val();
 	var tracery = $('#tracery').val();
 	var public_source = $('#public_source').val();
+	var is_sensitive = $('#is_sensitive').val();
 	var does_replies = $('#does_replies').val();
 	var reply_rules = $('#reply_rules').val();
 	$.ajax({
 	  url: "update.php",
 	  method : "POST",
-	  data : {"frequency": freq , "tracery" : tracery, "public_source" : public_source, "does_replies" : does_replies, "reply_rules" : reply_rules},
+	  data : {"frequency": freq , "tracery" : tracery, "public_source" : public_source, "is_sensitive": is_sensitive, "does_replies" : does_replies, "reply_rules" : reply_rules},
 	  dataType: "json"
 	})
 	  .done(function( data ) {

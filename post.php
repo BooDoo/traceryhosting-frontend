@@ -1,15 +1,8 @@
 <?php
+header('Content-Type: application/json');
 
-
-//header('Content-Type: application/json');
-
-require "twitteroauth/autoload.php";
+require "MastodonOAuthPHP/autoload.php";
 require "credentials.php";
-
-use Abraham\TwitterOAuth\TwitterOAuth;
-
-
-
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD, array(
     PDO::MYSQL_ATTR_FOUND_ROWS => true
@@ -22,16 +15,14 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_set_cookie_params(2678000);
 session_start();
 
-if (isset($_SESSION['oauth_token']))
+if (isset($_SESSION['bearer_token']))
 {
 	try
 	{
 
+		$stmt = $pdo->prepare('SELECT * FROM traceries WHERE url = :url');
 
-
-		$stmt = $pdo->prepare('SELECT * FROM traceries WHERE user_id = :user_id');
-
-		$stmt->execute(array('user_id' => $_SESSION['user_id']));
+		$stmt->execute(array('url' => $_SESSION['url']));
 		$result = $stmt->fetch(PDO::FETCH_ASSOC); 
 
 		if ($result['blocked_status'] != 0) //are they blocked
@@ -55,13 +46,12 @@ if (isset($_SESSION['oauth_token']))
 		);
 
 		$cwd = '/tmp';
-		$env = array('TWITTER_CONSUMER_KEY' => CONSUMER_KEY,
-					 'TWITTER_CONSUMER_SECRET' => CONSUMER_SECRET,
-					 'ACCESS_TOKEN' => $result['token'],
-					 'ACCESS_TOKEN_SECRET' =>  $result['token_secret']);
+		$env = array(	'ACCESS_TOKEN' => $result['bearer'],
+				'INSTANCE_DOMAIN' =>  $result['instance'],
+				'IS_SENSITIVE' => $result['is_sensitive']);
 
 
-		$process = proc_open(NODE_PATH . " " . SENDTWEET_PATH, $descriptorspec, $pipes, $cwd, $env);
+		$process = proc_open(NODE_PATH . " " . SENDSTATUS_PATH, $descriptorspec, $pipes, $cwd, $env);
 
 		if (is_resource($process)) {
 		    // $pipes now looks like this:
@@ -69,7 +59,7 @@ if (isset($_SESSION['oauth_token']))
 		    // 1 => readable handle connected to child stdout
 		    // Any error output will be appended to /tmp/error-output.txt
 
-		    fwrite($pipes[0], $_POST['tweet']);
+		    fwrite($pipes[0], $_POST['status']);
 		    fclose($pipes[0]);
 
 		    $result = stream_get_contents($pipes[1]);

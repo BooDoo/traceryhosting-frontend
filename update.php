@@ -1,17 +1,14 @@
 <?php
 
-
 header('Content-Type: application/json');
 
-require "twitteroauth/autoload.php";
+require_once("MastodonOAuthPHP/autoload.php");
 require "credentials.php";
 
-use Abraham\TwitterOAuth\TwitterOAuth;
+session_set_cookie_params(2678000);
+session_start();
 
-
-
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
-
+$instance_domain = $_SESSION['instance_domain'];
 
 $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tracery_php', DB_PASSWORD, array(
     PDO::MYSQL_ATTR_FOUND_ROWS => true
@@ -20,19 +17,15 @@ $pdo = new PDO('mysql:dbname=traceryhosting;host=127.0.0.1;charset=utf8mb4', 'tr
 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-session_set_cookie_params(2678000);
-session_start();
-
-if (isset($_SESSION['oauth_token']))
+if (isset($_SESSION['bearer_token']))
 {
 	try
 	{
 		//todo validate json here
+		//TODO use url instead of token? tokens may have collision
+		$stmt = $pdo->prepare('UPDATE traceries SET frequency=:frequency, tracery=:tracery, public_source=:public_source, is_sensitive=:is_sensitive, does_replies=:does_replies, reply_rules=:reply_rules, last_updated=now() WHERE bearer=:bearer');
 
-		$stmt = $pdo->prepare('UPDATE traceries SET frequency=:frequency, tracery=:tracery, public_source=:public_source, does_replies=:does_replies, reply_rules=:reply_rules, last_updated=now() WHERE token=:token');
-
-	  	$stmt->execute(array('frequency' => $_POST['frequency'], 'tracery' => $_POST['tracery'],'public_source' => $_POST['public_source'],'does_replies' => $_POST['does_replies'],'reply_rules' => $_POST['reply_rules'], 'token' => $_SESSION['oauth_token']));
+	  	$stmt->execute(array('frequency' => $_POST['frequency'], 'tracery' => $_POST['tracery'],'public_source' => $_POST['public_source'], 'is_sensitive' => $_POST['is_sensitive'], 'does_replies' => $_POST['does_replies'],'reply_rules' => $_POST['reply_rules'], 'bearer' => $_SESSION['bearer_token']));
 
 	  	if ($stmt->rowCount() == 1)
 	  	{
