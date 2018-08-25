@@ -15,11 +15,12 @@ If you can't tell by the fork info, this is all heavily based on [v21/traceryhos
 # TODO:  
   - [X] Support disparate Mastodon instances
   - [X] Remove references to "tweet"s
-  - [ ] Change validation maximum characters to 500
+  - [X] Change validation maximum characters to 500
+  - [X] Fix reply grammars not generating
   - [ ] Count raw characters and ditch `twitter-text`?
   - [ ] Add {cut …} syntax and display status accordingly
   - [ ] Add {alt …} syntax and assign alt/title attributes accordingly
   - [ ] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
   - [ ] Branch/submit PR to [MastodonOAuthPHP](https://github.com/TheCodingCompany/MastodonOAuthPHP) with patches
-  - [ ] ...or at least don't hardcode values in the `MastodonOAuthPHP/theCodingCompany/oAuth.php` source...
+  - [X] don't hardcode values in the `MastodonOAuthPHP/theCodingCompany/oAuth.php` source
   - [ ] translation/internationalization layer?
