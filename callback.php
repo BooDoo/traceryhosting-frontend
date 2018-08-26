@@ -6,6 +6,21 @@ require "credentials.php";
 session_set_cookie_params(2678000);
 session_start();
 
+// Dynamically determine our protocol/host, and generate OAUTH_CALLBACK uri
+if (isset($_SERVER['HTTPS']) &&
+    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $protocol = 'https://';
+}
+else {
+  $protocol = 'http://';
+}
+$host  = $_SERVER['HTTP_HOST'];
+$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+$extra = 'callback.php';
+define('OAUTH_CALLBACK', "$protocol$host$uri/$extra");
+
 $instance_domain = $_SESSION['instance_domain'];
 parse_str( $_SERVER['QUERY_STRING'], $get_params);
 
@@ -49,7 +64,7 @@ $connection->setCredentials(array(
 	"client_id" => $res['client_id'],
 	"client_secret" => $res['client_secret']
 ));
-$bearer_token = $connection->getAccessToken($auth_code);
+$bearer_token = $connection->getAccessToken($auth_code, OAUTH_CALLBACK);
 
 if ($bearer_token == false)
 {

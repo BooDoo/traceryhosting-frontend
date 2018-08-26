@@ -45,14 +45,15 @@ class Mastodon
      * Create an App and get client_id and client_secret
      * @param string $name
      * @param string $website_url
+     * @param string $redirect_uri
      * @return array|bool
      */
-    public function createApp($name, $website_url, $redirect_uri="urn:ietf:wg:oauth:2.0:oob"){
+    public function createApp($name, $website_url, $redirect_uri){
         if(!empty($name) && !empty($website_url)){
             //Set our info
             $this->app_config["client_name"] = $name;
             $this->app_config["website"]     = $website_url;
-            $this->app_config["redirect_uri"]= $redirect_uri; 
+	    $this->app_config["redirect_uris"]=$redirect_uri;
             return $this->getAppConfig();
         }
         return false;

@@ -160,14 +160,7 @@ trait oAuth
      * @param string $auth_code
      * @return string | bool
      */
-    public function getAccessToken($auth_code = ""){
-        if(! (isset($this->app_config) && isset($this->app_config["redirect_uri"]) ) ) {
-		$redirect_uri = "https://YOURDOMAIN.HERE/callback.php"; # "urn:ietf:wg:oauth:2.0:oob";
-	} 
-	else {
-		$redirect_uri = $this->app_config["redirect_uri"];
-	}
-
+    public function getAccessToken($auth_code = "", $redirect_uri="urn:ietf:wg:oauth:2.0:oob") {
         if(is_array($this->credentials) && isset($this->credentials["client_id"])){
             
             //Request access token in exchange for our Authorization token
