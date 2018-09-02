@@ -99,6 +99,27 @@ nl2br = function (str, is_xhtml) {
 	return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 };
 
+// Returns a "tagObject" like: {img: `https://imgur.com/21324567`} or {cut: `uspol`}
+var prepareTag = function(tag) {
+	const knownTags = ["img", "svg", "cut", "alt", "hide", "show"];
+	let match = tag.match(/^\{((?:img|svg|cut|alt) |hide|show)(.*)\}/);
+	if ( match && match[1] && _.includes(knownTags, match[1].trim()) ) {
+		let tagType = match[1].trim();
+		let tagContent = match[2];
+
+		const unescapeOpenBracket = /\\{/g;
+		const unescapeCloseBracket = /\\}/g;
+		tagContent = tagContent.replace(unescapeOpenBracket, "{");
+		tagContent = tagContent.replace(unescapeCloseBracket, "}");
+
+		toReturn = {};
+		toReturn[tagType] = tagContent;
+		return toReturn;
+
+	} else {
+		console.error(`No known action for ${tag.split(' ')[0]}, ignoring`);
+	}
+}
 
 // this is much more complex than i thought it would be
 // but this function will find our image tags 
@@ -108,7 +129,7 @@ var matchBrackets = function(text) {
   
   // simple utility function
   function reverseString(s) {
-    return s.split('').reverse().join('');
+	return s.split('').reverse().join('');
   }
 
   // this is an inverstion of the natural order for this RegEx:
@@ -117,10 +138,10 @@ var matchBrackets = function(text) {
   text = reverseString(text);
   var matches = text.match(bracketsRe);
   if(matches === null) {
-    return null;
+	return null;
   }
   else {
-    return matches.map(reverseString).reverse();
+	return matches.map(reverseString).reverse().map(prepareTag);
   }
 };
 
@@ -130,7 +151,7 @@ function removeBrackets (text) {
   
   // simple utility function
   var reverseString = function(s) {
-    return s.split('').reverse().join('');
+	return s.split('').reverse().join('');
   }
 
   // this is an inverstion of the natural order for this RegEx:
@@ -198,12 +219,18 @@ var generate_reply = function()
 	validate_reply_rules();
 	if (replyrules_valid && processedGrammar != null)
 	{
+		let validatorId = 'reply-validator';
+		let statusId = 'generated-reply';
+		let mediaId = 'reply-media';
+		let spoilerId = 'reply-media-spoiler';
+		let postButtonId = 'post-generated-status';
+
 		var mention = $('textarea#test_mention').val();
 		let username = _.last(url.split('/'));
 
 		if (mention.indexOf(username) == -1) //if we're not @ed
 		{
-			$('#generated-reply').html("<i>Not mentioned</i>" + "<div id=\"reply-media\"></div>");
+			$(`#${statusId}`).html(`<i>Not mentioned</i><div id="${mediaId}"></div>`);
 		}
 		else
 		{
@@ -213,72 +240,113 @@ var generate_reply = function()
 			});
 			var reply = processedGrammar.flatten(origin);
 
-
-
-			var media = matchBrackets(reply);
-			var just_text_status = removeBrackets(reply);
+			let meta_tags = matchBrackets(reply);
+			let just_text_status = removeBrackets(reply);
+			$(`#${statusId}`).html(nl2br(_.escape(just_text_status)) + `<div id="${mediaId}"></div>`);
 
 			if (reply == "")
 			{
-				$('#generated-reply').html("<i>No reply</i>" + "<div id=\"reply-media\"></div>");
+				$(`#${statusId}`).html(`<i>No reply</i><div id="${mediaId}"></div>`);
 			}
 			else
 			{
-				$('#generated-reply').html(nl2br(_.escape(just_text_status)) + "<div id=\"reply-media\"></div>");
+				$(`#${statusId}`).html(nl2br(_.escape(just_text_status)) + `<div id="${mediaId}"></div>`);
+				$(`#${statusId}`).append(`
+				<button type="button" id="${spoilerId}">
+					 <span id="${spoilerId}__warning">Sensitive content</span>
+					 <span id="${spoilerId}__trigger">Click to view</span>
+				 </button>
+				`);
 			}
 
 
 			if (twttr.txt.getTweetLength(just_text_status) > 500)
 			{
-				$('#generated-reply').addClass('too-long');
+				$(`#${statusId}`).addClass('too-long');
 			}
 			else
 			{
-				$('#generated-reply').removeClass('too-long');
+				$(`#${statusId}`).removeClass('too-long');
 			}
 
+if (!_.isEmpty(meta_tags))
+			{
 
-			_.each(media, function(media){
+				console.dir(meta_tags);
 
-				var unescapeOpenBracket = /\\{/g;
-				var unescapeCloseBracket = /\\}/g;
-				media = media.replace(unescapeOpenBracket, "{");
-				media = media.replace(unescapeCloseBracket, "}");
+				let medias = [];
+				let cw_label = null;
+				let alt_tags = [];
+				let hide_media = null;
+				let show_media = null;
 
-				if (media.indexOf("svg ") === 1)
-				{
-					var actualSVG = media.substr(5,media.length - 6);
+				cw_label = _.find(meta_tags, tagObject=> _.has(tagObject, "cut")); // we take the first CUT, or leave it undefined
+				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
+				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
+				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
-					var parser = new DOMParser();
-					var doc = parser.parseFromString(actualSVG, "image/svg+xml");
-					
+				hide_media = _.find(meta_tags, tagObject=>_.has(tagObject, "hide")); // undefined or [{hide: ""}...]
+				show_media = _.find(meta_tags, tagObject=>_.has(tagObject, "show")); // undefined or [{show: ""}...]
 
-				    validateSVG(doc, actualSVG);
-
-
-					$('#reply-media').append("<div class=\"svg-media\">" + actualSVG + "</div>");
+				if (hide_media && show_media) {
+					hide_media = true; // both given explicitly, prefer to HIDE
+					show_media = false;
 				}
-				else if (media.indexOf("img ") === 1)
-				{
+				else if (show_media) {
+					hide_media = false;
+				}
+				else if (hide_media) {
+					show_media = false;
+				}
+				else {
+					// nether show nor hide given explicitly, look at stgandard inheritance
+					hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					hide_media = hide_media || !_.isEmpty(cw_label);
+				}
 
-					var url = media.substr(5,media.length - 6);
+				if ( hide_media ) {
+					$(`#${mediaId}`).addClass('sensitive').addClass('hidden');
+				}
+				else {
+					$(`#${mediaId}`).removeClass('sensitive').removeClass('hidden');
+				}
 
-					$('#reply-media').append("<div class=\"svg-media\"> <img src=\"" + url + "\"></div>");
+				if (!_.isEmpty(cw_label)) {
+					let generated_status = document.getElementById(statusId);
+					generated_status.innerHTML = `
+									<span class="spoiler_text">${cw_label}</span>
+									<details>
+										<summary>
+											<a class="btn btn-default btn-cut"><span></span></a>
+										</summary>
 
+										${generated_status.innerHTML}
+									</details>`;
 				}
-				else if (media.indexOf("cut ") === 1)
-				{
-					console.log(`Will try a content warning labeled: ${media.substr(5)}`);
-				}
-				else if (media.indexOf("alt ") === 1)
-				{
-					console.log(`Will assign media alt text of: ${media.substr(5)}`);
-				}
-				else
-				{
-					$('#replyrules-validator').removeClass('hidden').text("Unknown media type " + media.substr(1,4));
-				}
-			});
+
+				_.each(medias, (tagObject, index)=> {
+					let tagType, tagContent, description;
+					[tagType, tagContent] = _.pairs(tagObject)[0];
+
+					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
+					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined
+					description = _.escape(description);
+
+					if (tagType === "svg") {
+						var parser = new DOMParser();
+						var doc = parser.parseFromString(tagContent, "image/svg+xml");
+
+						validateSVG(doc, tagContent);
+
+						$(`#${mediaId}`).append(`<div class="svg-media" aria-label="${description}" title="${description}">${tagContent}</div>`);
+
+					}
+
+					else if (tagType === "img") {
+						$(`#${mediaId}`).append(`<div class="svg-media"> <img alt="${description}" title="${description}" src="${tagContent}"></div>`);
+					}
+				});
+			};
 		}
 
 	}
@@ -295,6 +363,12 @@ var status; //global so we can see it when we press the Post! button
 var processedGrammar; //global so it can be used for replies
 var generate = function()
 {
+	let validatorId = 'tracery-validator';
+	let statusId = 'generated-status';
+	let mediaId = 'status-media';
+	let spoilerId = 'media-spoiler';
+	let postButtonId = 'post-generated-status';
+
 	processedGrammar = null;
 	var string = $('textarea#tracery').val();
 	try{
@@ -302,7 +376,7 @@ var generate = function()
 		try
 		{
 
-			$('#tracery-validator').addClass('hidden').text("Parsed successfully");
+			$(`#${validatorId}`).addClass('hidden').text("Parsed successfully");
 
 
 			processedGrammar = tracery.createGrammar(parsed);
@@ -310,86 +384,127 @@ var generate = function()
 			processedGrammar.addModifiers(tracery.baseEngModifiers);
 			status = processedGrammar.flatten("#origin#");
 
-			var media = matchBrackets(status);
+			var meta_tags = matchBrackets(status);
 			var just_text_status = removeBrackets(status);
-			$('#generated-status').html(nl2br(_.escape(just_text_status)) + "<div id=\"status-media\"></div>");
+			$(`#${statusId}`).html(nl2br(_.escape(just_text_status)) + `<div id="${mediaId}"></div>`);
+			$(`#${statusId}`).append(`
+			<button type="button" id="${spoilerId}">
+				 <span id="${spoilerId}__warning">Sensitive content</span>
+				 <span id="${spoilerId}__trigger">Click to view</span>
+			 </button>
+			`);
 
 			if (twttr.txt.getTweetLength(just_text_status) > 500)
 			{
-				$('#generated-status').addClass('too-long');
+				$(`#${statusId}`).addClass('too-long');
 
-				$('#post-generated-status').attr('disabled','disabled').addClass('disabled');
+				$(`#${postButtonId}`).attr('disabled','disabled').addClass('disabled');
 			}
 			else
 			{
-				$('#generated-status').removeClass('too-long');
-				$('#post-generated-status').removeAttr('disabled').removeClass('disabled');
+				$(`#${statusId}`).removeClass('too-long');
+				$(`#${postButtonId}`).removeAttr('disabled').removeClass('disabled');
 			}
  
 
-			_.each(media, function(media){
+			if (!_.isEmpty(meta_tags))
+			{
 
-				var unescapeOpenBracket = /\\{/g;
-				var unescapeCloseBracket = /\\}/g;
-				media = media.replace(unescapeOpenBracket, "{");
-				media = media.replace(unescapeCloseBracket, "}");
+				console.dir(meta_tags);
 
-				if (media.indexOf("svg ") === 1)
-				{
-					var actualSVG = media.substr(5,media.length - 6);
+				let medias = [];
+				let cw_label = null;
+				let alt_tags = [];
+				let hide_media = null;
+				let show_media = null;
 
-					var parser = new DOMParser();
-					var doc = parser.parseFromString(actualSVG, "image/svg+xml");
-					
+				cw_label = _.find(meta_tags, tagObject=> _.has(tagObject, "cut")); // we take the first CUT, or leave it undefined
+				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
+				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
+				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
-				    validateSVG(doc, actualSVG);
+				hide_media = _.find(meta_tags, tagObject=>_.has(tagObject, "hide")); // undefined or [{hide: ""}...]
+				show_media = _.find(meta_tags, tagObject=>_.has(tagObject, "show")); // undefined or [{show: ""}...]
 
-
-					$('#status-media').append("<div class=\"svg-media\">" + actualSVG + "</div>");
+				if (hide_media && show_media) {
+					hide_media = true; // both given explicitly, prefer to HIDE
+					show_media = false;
 				}
-				else if (media.indexOf("img ") === 1)
-				{
-					var url = media.substr(5,media.length - 6);
+				else if (show_media) {
+					hide_media = false;
+				}
+				else if (hide_media) {
+					show_media = false;
+				}
+				else {
+					// nether show nor hide given explicitly, look at stgandard inheritance
+					hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					hide_media = hide_media || !_.isEmpty(cw_label);
+				}
 
-					$('#status-media').append("<div class=\"svg-media\"> <img src=\"" + url + "\"></div>");
+				if ( hide_media ) {
+					$(`#${mediaId}`).addClass('sensitive').addClass('hidden');
 				}
-				else if (media.indexOf("cut ") === 1)
-				{
-					console.log(`Will try a content warning labeled: ${media.substr(5, media.length - 6)}`);
+				else {
+					$(`#${mediaId}`).removeClass('sensitive').removeClass('hidden');
 				}
-				else if (media.indexOf("alt ") === 1)
-				{
-					console.log(`Will assign media alt text of: ${media.substr(5, media.length - 6)}`);
+
+				if (!_.isEmpty(cw_label)) {
+					let generated_status = document.getElementById(statusId);
+					generated_status.innerHTML = `
+									<span class="spoiler_text">${cw_label}</span>
+									<details>
+										<summary>
+											<a class="btn btn-default btn-cut"><span></span></a>
+										</summary>
+
+										${generated_status.innerHTML}
+									</details>`;
 				}
-				else
-				{
-					$('#tracery-validator').removeClass('hidden').text("Unknown media type " + media.substr(1,4));
-				}
-			});
+
+				_.each(medias, (tagObject, index)=> {
+					let tagType, tagContent, description;
+					[tagType, tagContent] = _.pairs(tagObject)[0];
+
+					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
+					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined
+					description = _.escape(description);
+
+					if (tagType === "svg") {
+						var parser = new DOMParser();
+						var doc = parser.parseFromString(tagContent, "image/svg+xml");
+
+						validateSVG(doc, tagContent);
+
+						$(`#${mediaId}`).append(`<div class="svg-media" aria-label="${description}" title="${description}">${tagContent}</div>`);
+
+					}
+
+					else if (tagType === "img") {
+						$(`#${mediaId}`).append(`<div class="svg-media"> <img alt="${description}" title="${description}" src="${tagContent}"></div>`);
+					}
+				});
+			};
 
 			valid = true;
-
 		}
 		catch (e)
 		{
 
-
-
-			$('#tracery-validator').removeClass('hidden').text("Tracery parse error: " + _.escape(e));
+			$(`#${validatorId}`).removeClass('hidden').text("Tracery parse error: " + _.escape(e));
 			valid = false;
 		}
 	}
 	catch (e) {
 
-
 		try {
 			var result = jsonlint.parse(string);
 			if (result) {
 				//valid via jsonlint?!
-				$('#tracery-validator').removeClass('hidden').text("Unknown JSON parse error: " + _.escape(e));
+				$(`#${validatorId}`).removeClass('hidden').text("Unknown JSON parse error: " + _.escape(e));
 			}
 		} catch(e) {
-			$('#tracery-validator').removeClass('hidden').html("JSON parse error:  <pre>" + _.escape(e) + "</pre>");
+			$(`#${validatorId}`).removeClass('hidden').html("JSON parse error:  <pre>" + _.escape(e) + "</pre>");
 		}
 
 		valid = false;
@@ -420,24 +535,14 @@ var validateSVG = function(doc, actualSVG)
 	var parsererrorNS = parser.parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI;
 
 
-    if (doc.documentElement.getAttribute("width") === null)
-    {
-    	$('#tracery-validator').removeClass('hidden').html("SVG element must specify a <code>width</code>");
-    }
-    if (doc.documentElement.getAttribute("height") === null)
-    {
-    	$('#tracery-validator').removeClass('hidden').html("SVG element must specify a <code>height</code>");
-    }
-/*
-    if (doc.documentElement.getAttribute("xmlns") === null)
-    {
-    	$('#tracery-validator').removeClass('hidden').html("SVG element should probably specify a <code>xmlns</code> attribute.");
-    }
-    if (doc.documentElement.getAttribute("xmlns:xlink") === null)
-    {
-    	$('#tracery-validator').removeClass('hidden').html("SVG element should probably specify a <code>xmlns:xlink</code> attribute.");
-    }*/
-
+	if (doc.documentElement.getAttribute("width") === null)
+	{
+		$('#tracery-validator').removeClass('hidden').html("SVG element must specify a <code>width</code>");
+	}
+	if (doc.documentElement.getAttribute("height") === null)
+	{
+		$('#tracery-validator').removeClass('hidden').html("SVG element must specify a <code>height</code>");
+	}
 
 	if(doc.getElementsByTagNameNS(parsererrorNS, 'parsererror').length > 0) {
 
@@ -455,8 +560,8 @@ var validateSVG = function(doc, actualSVG)
 	
 
 
-        $('#tracery-validator').removeClass('hidden').html("SVG parsing error<br><pre>" + _.escape(excerpt) + "</pre><span class=\"parsererror\">" + nl2br(doc.getElementsByTagName('parsererror')[0].innerHTML) + "</span>");
-    }
+		$('#tracery-validator').removeClass('hidden').html("SVG parsing error<br><pre>" + _.escape(excerpt) + "</pre><span class=\"parsererror\">" + nl2br(doc.getElementsByTagName('parsererror')[0].innerHTML) + "</span>");
+	}
 
 }
 
@@ -466,22 +571,22 @@ var excerptAtLineCol = function(text, line_n, col_n, n_surrounding_lines){
   n_surrounding_lines = n_surrounding_lines || 0;
 
   return text.split("\n").map(function(line, line_i){
-    return {
-      line: line,
-      line_n: line_i
-    };
+	return {
+	  line: line,
+	  line_n: line_i
+	};
   }).filter(function(l){
-    return Math.abs(l.line_n - line_n) <= n_surrounding_lines;
+	return Math.abs(l.line_n - line_n) <= n_surrounding_lines;
   }).map(function(l){
-    if(l.line_n !== line_n){
-      return l.line;
-    }
-    var col_position_whitespace = '';
-    var j;
-    for(j=0; j<Math.min(col_n, l.line.length); j++){
-      col_position_whitespace += l.line[j].replace(/[^\s]/g, " ");
-    }
-    return l.line + "\n" + col_position_whitespace + '^';
+	if(l.line_n !== line_n){
+	  return l.line;
+	}
+	var col_position_whitespace = '';
+	var j;
+	for(j=0; j<Math.min(col_n, l.line.length); j++){
+	  col_position_whitespace += l.line[j].replace(/[^\s]/g, " ");
+	}
+	return l.line + "\n" + col_position_whitespace + '^';
   }).join("\n");
 };
 
@@ -518,14 +623,14 @@ $('#post-generated-status').click(function()
 
 
 $(window).bind('keydown', function(event) {
-    if (event.ctrlKey || event.metaKey) {
-        switch (String.fromCharCode(event.which).toLowerCase()) {
-        case 's':
-            event.preventDefault();
-            save();
-            break;
-        }
-    }
+	if (event.ctrlKey || event.metaKey) {
+		switch (String.fromCharCode(event.which).toLowerCase()) {
+		case 's':
+			event.preventDefault();
+			save();
+			break;
+		}
+	}
 });
 
 
@@ -607,4 +712,10 @@ $(document).delegate('#reply_rules', 'keydown', function(e) {
   }
 });
 
+$('body').on('click', '#media-spoiler, #status-media.sensitive', ()=> {
+	return $('#status-media').toggleClass('hidden');
+});
 
+$('body').on('click', '#reply-media-spoiler, #reply-media.sensitive', ()=> {
+	return $('#reply-media').toggleClass('hidden');
+});

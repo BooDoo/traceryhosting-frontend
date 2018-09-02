@@ -244,9 +244,8 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 	        <span class="username-text"><?php echo($result['username']) ?></span>
 	        </a>
     </div>
-<!--    <br> -->
-<!-- TODO: Un-hide these once I've figured out the ALT/CUT tags... -->
-    <div class="form-group" style="display:none">
+    <br>
+    <div class="form-group">
         
 	    <select class="form-control" id="is_sensitive" name="is_sensitive">
 	    	<?php 
@@ -258,15 +257,13 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 		</select>
     </div>
 
-    <div class="form-group" style="display:none">
+    <div class="form-group">
         media is posted as <?php echo('<a class="username" href="'. $result['url']. '">') ?>
 	        <?php echo('<img src="' . $_SESSION['profile_pic'] . '" width=32> '); ?>
 	        <span class="username-text"><?php echo($result['username']) ?></span>
 	        </a>
     </div>
     <br>
-<!-- try again tomorrow, kid. /TODO -->
-
     <div class="form-group">
           <select class="form-control" id="does_replies" name="does_replies">
           <?php 

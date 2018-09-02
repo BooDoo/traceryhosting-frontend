@@ -1,7 +1,74 @@
+/* ==========================================================================
+    CBTS supplemental syles (CW/spoiler text, sensitive media)
+   ========================================================================== */
 
+details .btn-cut > span::before {
+  display: block;
+  content: "Show more";
+}
+
+details[open] .btn-cut > span::before {
+  display: block;
+  content: "Show less";
+}
+
+.spoiler_text {
+  display: block;
+}
+
+#status-media.sensitive.hidden, #reply-media.sensitive.hidden {
+  visibility:hidden;
+}
+
+#media-spoiler, #reply-media-spoiler {
+  background: #000;
+  border: 0;
+  display: none;
+  width: 50%;
+  height: 18em;
+}
+
+#media-spoiler__trigger, #media-spoiler__warning,
+#reply-media-spoiler__trigger, #reply-media-spoiler__warning {
+  color: #9baec8;
+  display: block;
+}
+
+#status-media.sensitive.hidden + #media-spoiler,
+#reply-media.sensitive.hidden + #reply-media-spoiler {
+  display: block;
+}
+
+#status-media.sensitive > .svg-media,
+#reply-media.sensitive > .svg-media {
+  cursor: pointer;
+}
+
+#status-media.sensitive > .svg-media:first-child::before,
+#reply-media.sensitive > .svg-media:first-child::before {
+  left: 4rem;
+  width: 4rem;
+  height: 4rem;
+  position: absolute;
+  opacity: 0.4;
+  display: flex;
+  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  border-radius: 50%;
+  color: white;
+  content: "🙈";
+  transition: all .5s ease-in-out;
+}
+
+#status-media.sensitive > .svg-media:hover::before,
+#reply-media.sensitive > .svg-media:hover::before {
+  opacity: 1;
+}
 
 /* ==========================================================================
-   Author's custom styles
+   Author's custom styles (CBDQ)
    ========================================================================== */
 
 body, html
