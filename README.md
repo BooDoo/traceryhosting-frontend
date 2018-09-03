@@ -18,9 +18,9 @@ If you can't tell by the fork info, this is all heavily based on [v21/traceryhos
   - [X] Change validation maximum characters to 500
   - [X] Fix reply grammars not generating
   - [ ] Count raw characters and ditch `twitter-text`?
-  - [ ] Add {cut …} syntax and display status accordingly
-  - [ ] Add {alt …} syntax and assign alt/title attributes accordingly
-  - [ ] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
+  - [X] Add {cut …} syntax and display status accordingly
+  - [X] Add {alt …} syntax and assign alt/title attributes accordingly
+  - [X] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
   - [ ] Branch/submit PR to [MastodonOAuthPHP](https://github.com/TheCodingCompany/MastodonOAuthPHP) with patches
   - [X] don't hardcode values in the `MastodonOAuthPHP/theCodingCompany/oAuth.php` source
   - [ ] translation/internationalization layer?
