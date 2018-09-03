@@ -171,6 +171,12 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
           <p>You can also include images in your stauses. The simplest way to do this is to specify a URL, like so <code>{img https://placeimg.com/640/480/animals/image.jpg}</code>. Alternatively, to generate an image within CBDQ, you can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVGs</a>. A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>. The syntax looks like this: <code>{svg  &lt;svg ...&gt; ... &lt;/svg&gt;}</code>. SVGs will need to specify a <code>width</code> and <code>height</code> attribute. Note that <code>"</code>s within SVG files need to be escaped as <code>\"</code>, as does <code>#</code>s (<code>\\#</code>). <code>{</code>s and <code>}</code>s can be escaped as <code>\\\\{</code> and <code>\\\\}</code>. </p>
 
+          <p>We also offer some Mastodon-specific features now:<ul>
+            <li>Put your status behind a "CW"/"spoiler" button with this tag: <code>{cut Your CW heading goes here}</code></li>
+            <li>Use <code>{alt a description of the image}</code> near a <code>{img…}</code> or <code>{svg…}</code> tag to assist folks using screen readers.
+            <li>Use <code>{hide}</code> anywhere in your generated status to flag your media as sensitive</li>
+            <li>Use <code>{show}</code> to override your sensitive media default and have your media shown for that post</li></ul>
+
           <p>If you create a bot I, or people I trust, find abusive or otherwise unpleasant I reserve the right to terminate it. If you have any questions, bug reports or comments you can reach me at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or at <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.</p>
 		  <ul>
         <li><a href="http://air.decontextualize.com/tracery/">Tracery tutorial</a></li>
