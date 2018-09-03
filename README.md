@@ -21,6 +21,9 @@ If you can't tell by the fork info, this is all heavily based on [v21/traceryhos
   - [X] Add {cut …} syntax and display status accordingly
   - [X] Add {alt …} syntax and assign alt/title attributes accordingly
   - [X] Reveal/finish implementing `is_sensitive` flag (...with per status override?)
+  - [ ] Page suggesting charitable orgs in lieu of financial support
+  - [ ] Add beeping.town server recommendation (after confirming Pleroma is OK)
+  - [ ] Get even more specific with callback URI so test instance port is taken into account
   - [ ] Branch/submit PR to [MastodonOAuthPHP](https://github.com/TheCodingCompany/MastodonOAuthPHP) with patches
   - [X] don't hardcode values in the `MastodonOAuthPHP/theCodingCompany/oAuth.php` source
   - [ ] translation/internationalization layer?
