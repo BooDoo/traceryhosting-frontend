@@ -299,8 +299,10 @@ if (!_.isEmpty(meta_tags))
 					show_media = false;
 				}
 				else {
-					// nether show nor hide given explicitly, look at stgandard inheritance
-					hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					// nether show nor hide given explicitly, look at standard inheritance
+					if (document.getElementById('is_sensitive')) {
+						hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					}
 					hide_media = hide_media || !_.isEmpty(cw_label);
 				}
 
@@ -437,8 +439,10 @@ var generate = function()
 					show_media = false;
 				}
 				else {
-					// nether show nor hide given explicitly, look at stgandard inheritance
-					hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					// nether show nor hide given explicitly, look at standard inheritance
+					if (document.getElementById('is_sensitive')) {
+						hide_media = hide_media || parseInt(document.getElementById('is_sensitive').value, 10);
+					}
 					hide_media = hide_media || !_.isEmpty(cw_label);
 				}
 
