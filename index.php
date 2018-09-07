@@ -125,9 +125,9 @@ for (var i = ul.children.length; i >= 0; i--) {
 	ul.appendChild(ul.children[Math.random() * i | 0]);
 }
 
-var charities = document.getElementById("charities");
-for (var i = charities.children.length; i >= 0; i--) {
-	charities.appendChild(charities.children[Math.random() * i | 0]);
+var orgs = document.getElementById("charities");
+for (var i = orgs.children.length; i >= 0; i--) {
+	orgs.appendChild(orgs.children[Math.random() * i | 0]);
 }
 </script> 
 			</div>
