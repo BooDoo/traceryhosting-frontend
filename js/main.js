@@ -272,8 +272,6 @@ var generate_reply = function()
 if (!_.isEmpty(meta_tags))
 			{
 
-				console.dir(meta_tags);
-
 				let medias = [];
 				let cw_label = null;
 				let alt_tags = [];
