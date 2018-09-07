@@ -124,6 +124,11 @@ var ul = document.getElementById("shuffle");
 for (var i = ul.children.length; i >= 0; i--) {
 	ul.appendChild(ul.children[Math.random() * i | 0]);
 }
+
+var charities = document.getElementById("charities");
+for (var i = charities.children.length; i >= 0; i--) {
+	charities.appendChild(charities.children[Math.random() * i | 0]);
+}
 </script> 
 			</div>
 		</div>
@@ -194,10 +199,18 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 				<li><a href="https://github.com/dariusk/corpora">Useful word collections</a></li>
 				<li><a href="https://github.com/v21/tracerybot">Example of a self-hosted bot running on Tracery</a></li>
 			</ul>
-			<p>
-		If you would like to help pay for server costs, maintenance and further development of this service, don't worry about it. Happy botting!
-		</p>
-		<p></p>
+			<p>In lieu of helping pay for server costs, maintenance and further development, please consider
+				<details id="charity_list"><summary><a>Supporting a charity</a></summary>
+					<ul id="charities">
+						<li><a href="https://barcc.org/join/donation">Boston Area Rape Crisis Center (BARCC)</a></li>
+						<li><a href="https://secure.thebronxfreedomfund.org/page/contribute/donate">The Bronx Freedom Fund</a></li>
+						<li><a href="https://www.msf.org/donate">Médecins Sans Frontières (Doctors Without Borders)</a></li>
+						<li><a href="https://www.weareplannedparenthood.org">Planned Parenthood</a></li>
+						<li><a href="https://www.transyouthequality.org/#block-yui_3_17_2_2_1447266818747_13555">Trans Youth Equality Foundation (TYEF)</li>
+						<li><a href="https://vocal.ourpowerbase.net/civicrm/contribute/transact?id=6">VOCAL New York</a></li>
+					</ul>
+				</details>
+			</p>
 			</div>
 		</div>
 		
