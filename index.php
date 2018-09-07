@@ -188,11 +188,11 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 			<p>If you create a bot I, or people I trust, find abusive or otherwise unpleasant I reserve the right to terminate it. If you have any questions, bug reports or comments you can reach me at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or at <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.</p>
 			<ul>
-		<li><a href="http://air.decontextualize.com/tracery/">Tracery tutorial</a></li>
-			<li><a href="http://www.crystalcodepalace.com/traceryTut.html">Interactive tutorial</a></li>
-			<li><a href="http://www.brightspiral.com/tracery/">Tracery visual editor</a></li>
-		<li><a href="https://github.com/dariusk/corpora">Useful word collections</a></li>
-			<li><a href="https://github.com/v21/tracerybot">Example of a self-hosted bot running on Tracery</a></li>
+				<li><a href="http://air.decontextualize.com/tracery/">Tracery tutorial</a></li>
+				<li><a href="http://www.crystalcodepalace.com/traceryTut.html">Interactive tutorial</a></li>
+				<li><a href="http://www.brightspiral.com/tracery/">Tracery visual editor</a></li>
+				<li><a href="https://github.com/dariusk/corpora">Useful word collections</a></li>
+				<li><a href="https://github.com/v21/tracerybot">Example of a self-hosted bot running on Tracery</a></li>
 			</ul>
 			<p>
 		If you would like to help pay for server costs, maintenance and further development of this service, don't worry about it. Happy botting!
