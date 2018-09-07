@@ -124,12 +124,7 @@ var ul = document.getElementById("shuffle");
 for (var i = ul.children.length; i >= 0; i--) {
 	ul.appendChild(ul.children[Math.random() * i | 0]);
 }
-
-var orgs = document.getElementById("charities");
-for (var i = orgs.children.length; i >= 0; i--) {
-	orgs.appendChild(orgs.children[Math.random() * i | 0]);
-}
-</script> 
+</script>
 			</div>
 		</div>
 
@@ -212,6 +207,12 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 				</details>
 			</p>
 			</div>
+<script type="text/javascript">
+var orgs = document.getElementById("charities");
+for (var i = orgs.children.length; i >= 0; i--) {
+	orgs.appendChild(orgs.children[Math.random() * i | 0]);
+}
+</script>
 		</div>
 		
 		<br><br>
