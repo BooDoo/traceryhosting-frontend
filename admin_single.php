@@ -180,7 +180,8 @@ if ($result['does_replies'] === "1")
 
         <script src="/js/vendor/bootstrap.min.js"></script>
 
-        <script src="/js/tracery.js"></script>
+        <script src="/js/tracery/tracery.js"></script>
+        <script src="/js/tracery/mods-eng-basic.js"></script>
         <script src="/js/twitter-text-1.9.4.min.js"></script>
         <script src="/js/expanding.js"></script>
         <script src="/js/json2.js"></script>

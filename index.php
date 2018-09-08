@@ -394,8 +394,9 @@ for (var i = orgs.children.length; i >= 0; i--) {
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
 		<script src="js/vendor/bootstrap.min.js"></script>
-	<script src="js/underscore-min.js"></script>
-		<script src="js/tracery.js"></script>
+		<script src="js/underscore-min.js"></script>
+	        <script src="/js/tracery/tracery.js"></script>
+	        <script src="/js/tracery/mods-eng-basic.js"></script>
 		<script src="js/twitter-text-1.9.4.min.js"></script>
 		<script src="js/expanding.js"></script>
 		<script src="js/json2.js"></script>
