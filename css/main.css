@@ -2,6 +2,24 @@
     CBTS supplemental syles (CW/spoiler text, sensitive media)
    ========================================================================== */
 
+.expanding-wrapper {
+  max-height: 800px;
+  width: 100%;
+  left: 0px;
+}
+
+textarea {
+  margin: 0px;
+  box-sizing: border-box;
+  max-height: 800px;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  resize: none;
+  overflow: auto;
+}
+
 details .btn-cut > span::before {
   display: block;
   content: "Show more";
@@ -34,8 +52,8 @@ details[open] .btn-cut > span::before {
   display: block;
 }
 
-#status-media.sensitive.hidden + #media-spoiler,
-#reply-media.sensitive.hidden + #reply-media-spoiler {
+#status-media.sensitive.hidden:not(:empty) + #media-spoiler,
+#reply-media.sensitive.hidden:not(:empty) + #reply-media-spoiler {
   display: block;
 }
 
