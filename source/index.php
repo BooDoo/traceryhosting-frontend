@@ -125,7 +125,9 @@ else
 </textarea>
     </div>
 <div id="tracery-validator" class="alert alert-danger hidden" role="alert">Parsing error</div>
-
+    <select class="form-control" id="is_sensitive" name="is_sensitive" style="display: none;">
+      <option value="0">Innocuous</option><option value="1">Sensitive</option>
+    </select>
     <div class="row">
     <div class="col-md-12">
       <div class="pull-right pad-left">
@@ -206,8 +208,11 @@ if ($result['does_replies'] === "1")
         <script src="/js/expanding.js"></script>
         <script src="/js/json2.js"></script>
         <script src="/js/jsonlint.js"></script>
-        <script src="/js/main.js"></script>
-        <script type="text/javascript">var url = "<?php echo($result['url'])?>"</script>
+	<script src="/js/main.js"></script>
+	<script type="text/javascript">
+		var url = "<?php echo($result['url'])?>";
+		document.getElementById('is_sensitive').value = <?php echo($result['is_sensitive'])?>;
+	</script>
     </body>
 </html>
 
