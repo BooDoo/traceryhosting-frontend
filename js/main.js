@@ -20,6 +20,12 @@ $('#is_sensitive').change(function() {
 	changeSaveButtonColour();
 });
 
+$('#visibility').change(function() {
+	unsaved = true;
+	changeSaveButtonColour();
+});
+
+
 $('#does_replies').change(function() {
 	unsaved = true;
 	changeSaveButtonColour();
@@ -649,12 +655,13 @@ var save = function()
 	var tracery = $('#tracery').val();
 	var public_source = $('#public_source').val();
 	var is_sensitive = $('#is_sensitive').val();
+	var visibility = $('#visibility').val();
 	var does_replies = $('#does_replies').val();
 	var reply_rules = $('#reply_rules').val();
 	$.ajax({
 	  url: "update.php",
 	  method : "POST",
-	  data : {"frequency": freq , "tracery" : tracery, "public_source" : public_source, "is_sensitive": is_sensitive, "does_replies" : does_replies, "reply_rules" : reply_rules},
+	  data : {"frequency": freq , "tracery" : tracery, "public_source" : public_source, "is_sensitive": is_sensitive, "visibility": visibility, "does_replies" : does_replies, "reply_rules" : reply_rules},
 	  dataType: "json"
 	})
 	  .done(function( data ) {

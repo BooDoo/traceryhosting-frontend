@@ -275,6 +275,24 @@ for (var i = orgs.children.length; i >= 0; i--) {
 	</div>
 	<br>
 	<div class="form-group">
+		<select class="form-control" id="visibility" name="visibility">
+			<?php
+			$visibilities = array("public" => "Public", "unlisted" => "Unlisted", "private" => "Private");
+			foreach ($visibilities as $visvalue => $vislabel) {
+			  echo('<option value="' . $visvalue . '" '. ($result['visibility'] == $visvalue ? 'selected' : '') .'>' . $vislabel . '</option>');
+			}
+			?>
+		</select>
+	</div>
+
+	<div class="form-group">
+		visibility for statuses from <?php echo('<a class="username" href="'. $result['url']. '">') ?>
+			<?php echo('<img src="' . $_SESSION['profile_pic'] . '" width=32> '); ?>
+			<span class="username-text"><?php echo($result['username']) ?></span>
+			</a>
+	</div>
+	<br>
+	<div class="form-group">
 		
 		<select class="form-control" id="is_sensitive" name="is_sensitive">
 			<?php 

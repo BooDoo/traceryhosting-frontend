@@ -48,7 +48,8 @@ if (isset($_SESSION['bearer_token']))
 		$cwd = '/tmp';
 		$env = array(	'ACCESS_TOKEN' => $result['bearer'],
 				'INSTANCE_DOMAIN' =>  $result['instance'],
-				'IS_SENSITIVE' => $result['is_sensitive']);
+				'IS_SENSITIVE' => $result['is_sensitive'],
+				'VISIBILITY' => $result['visibility']);
 
 
 		$process = proc_open(NODE_PATH . " " . SENDSTATUS_PATH, $descriptorspec, $pipes, $cwd, $env);

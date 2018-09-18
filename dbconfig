@@ -20,6 +20,7 @@ CREATE TABLE `traceries` (
   `public_source` tinyint(1) DEFAULT NULL,
   `blocked_status` smallint(6) DEFAULT NULL,
   `is_sensitive` smallint(6) DEFAULT 0,
+  `visibility` nvarchar(16) DEFAULT 'public',
   `does_replies` tinyint(1) DEFAULT '0',
   `reply_rules` mediumtext,
   `last_reply` nvarchar(64) DEFAULT 1,
