@@ -175,7 +175,7 @@ var validate_reply_rules = function()
 	{
 		var parsed = jQuery.parseJSON(string); 
 
-		var regexes_valid = _.all(parsed, function(val, key, index)
+		var regexes_valid = _.every(parsed, function(val, key, index)
 		{
 			try
 			{
