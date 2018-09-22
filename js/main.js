@@ -293,7 +293,7 @@ var generate_reply = function()
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
-				meta_visibility = _.find(VISIBILITIES.reverse(), vis=>
+				meta_visibility = _.findLast(VISIBILITIES, vis=>
 							meta_tags.find(tagObject=>
 								tagObject.hasOwnProperty(vis)
 						  ));
@@ -343,7 +343,7 @@ var generate_reply = function()
 
 				_.each(medias, (tagObject, index)=> {
 					let tagType, tagContent, description;
-					[tagType, tagContent] = _.pairs(tagObject)[0];
+					[tagType, tagContent] = _.toPairs(tagObject)[0];
 
 					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
 					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined
@@ -447,7 +447,7 @@ var generate = function()
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
-				meta_visibility = _.find(VISIBILITIES.reverse(), vis=>
+				meta_visibility = _.findLast(VISIBILITIES, vis=>
 							meta_tags.find(tagObject=>
 								tagObject.hasOwnProperty(vis)
 						  ));
@@ -496,7 +496,7 @@ var generate = function()
 
 				_.each(medias, (tagObject, index)=> {
 					let tagType, tagContent, description;
-					[tagType, tagContent] = _.pairs(tagObject)[0];
+					[tagType, tagContent] = _.toPairs(tagObject)[0];
 
 					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
 					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined

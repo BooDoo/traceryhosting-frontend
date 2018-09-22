@@ -59,7 +59,7 @@ define('APP_ROOT', "$protocol$host");
 		<link rel="stylesheet" href="css/main.css">
 		<link href='//fonts.googleapis.com/css?family=Yesteryear' rel='stylesheet' type='text/css'>
 		<script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" async></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js" async></script>
 	</head>
 	<body>
 <?php
@@ -414,7 +414,7 @@ for (var i = orgs.children.length; i >= 0; i--) {
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
 		<script src="js/vendor/bootstrap.min.js"></script>
-	<script src="js/underscore-min.js"></script>
+		<script src="js/lodash.min.js"></script>
 		<script src="js/tracery.js"></script>
 		<script src="js/twitter-text-1.9.4.min.js"></script>
 		<script src="js/expanding.js"></script>

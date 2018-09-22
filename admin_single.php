@@ -38,7 +38,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != ADMIN_USER_ID)
         <link rel="stylesheet" href="/css/main.css">
     <link href='//fonts.googleapis.com/css?family=Yesteryear' rel='stylesheet' type='text/css'>
         <script src="/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="/js/underscore-min.js"></script>
+        <script src="/js/lodash.min.js"></script>
     </head>
     <body>
     
