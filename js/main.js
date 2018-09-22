@@ -107,8 +107,8 @@ nl2br = function (str, is_xhtml) {
 
 // Returns a "tagObject" like: {img: `https://imgur.com/21324567`} or {cut: `uspol`}
 var prepareTag = function(tag) {
-	const knownTags = ["img", "svg", "cut", "alt", "hide", "show"];
-	let match = tag.match(/^\{((?:img|svg|cut|alt) |hide|show)(.*)\}/);
+	const knownTags = ["img", "svg", "cut", "alt", "hide", "show", "public", "unlisted", "private", "direct"];
+	let match = tag.match(/^\{((?:img|svg|cut|alt) |hide|show|public|unlisted|private|direct)(.*)\}/);
 	if ( match && match[1] && _.includes(knownTags, match[1].trim()) ) {
 		let tagType = match[1].trim();
 		let tagContent = match[2];
@@ -234,6 +234,9 @@ var generate_reply = function()
 		var mention = $('textarea#test_mention').val();
 		let username = _.last(url.split('/'));
 
+		const VISIBILITIES = ["public", "unlisted", "private", "direct"];
+		let visibility = document.getElementById('visibility').value;
+
 		if (mention.indexOf(username) == -1) //if we're not @ed
 		{
 			$(`#${statusId}`).html(`<i>Not mentioned</i><div id="${mediaId}"></div>`);
@@ -275,12 +278,13 @@ var generate_reply = function()
 				$(`#${statusId}`).removeClass('too-long');
 			}
 
-if (!_.isEmpty(meta_tags))
+			if (!_.isEmpty(meta_tags))
 			{
 
 				let medias = [];
 				let cw_label = null;
 				let alt_tags = [];
+				let meta_visibility = null;
 				let hide_media = null;
 				let show_media = null;
 
@@ -288,6 +292,13 @@ if (!_.isEmpty(meta_tags))
 				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
+
+				meta_visibility = _.find(VISIBILITIES.reverse(), vis=>
+							meta_tags.find(tagObject=>
+								tagObject.hasOwnProperty(vis)
+						  ));
+				visibility = meta_visibility || visibility;
+
 
 				hide_media = _.find(meta_tags, tagObject=>_.has(tagObject, "hide")); // undefined or [{hide: ""}...]
 				show_media = _.find(meta_tags, tagObject=>_.has(tagObject, "show")); // undefined or [{show: ""}...]
@@ -353,6 +364,10 @@ if (!_.isEmpty(meta_tags))
 					}
 				});
 			};
+
+			// set visibilty glyph for reply
+			document.getElementById('generated-reply-visibility').className = "btn disabled glyphicon glyphicon-" + visibility;
+			document.getElementById('generated-reply-visibility').title = "Reply would post with '" + visibility + "' visibility';
 		}
 
 	}
@@ -381,6 +396,8 @@ var generate = function()
 		var parsed = jQuery.parseJSON(string);
 		try
 		{
+			const VISIBILITIES = ["public", "unlisted", "private", "direct"];
+			let visibility = document.getElementById("visibility").value;
 
 			$(`#${validatorId}`).addClass('hidden').text("Parsed successfully");
 
@@ -421,6 +438,7 @@ var generate = function()
 				let medias = [];
 				let cw_label = null;
 				let alt_tags = [];
+				let meta_visibility = null;
 				let hide_media = null;
 				let show_media = null;
 
@@ -428,6 +446,12 @@ var generate = function()
 				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
+
+				meta_visibility = _.find(VISIBILITIES.reverse(), vis=>
+							meta_tags.find(tagObject=>
+								tagObject.hasOwnProperty(vis)
+						  ));
+				visibility = meta_visibility || visibility;
 
 				hide_media = _.find(meta_tags, tagObject=>_.has(tagObject, "hide")); // undefined or [{hide: ""}...]
 				show_media = _.find(meta_tags, tagObject=>_.has(tagObject, "show")); // undefined or [{show: ""}...]
@@ -493,6 +517,10 @@ var generate = function()
 					}
 				});
 			};
+
+			// Set visibility indication on Post button
+			document.getElementById("post-generated-status").title = "Post status with '" + visibility + "' visibility";
+			document.getElementById("generated-status-visibility").className = "glyphicon glyphicon-" + visibility;
 
 			valid = true;
 		}

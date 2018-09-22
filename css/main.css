@@ -2,6 +2,27 @@
     CBTS supplemental syles (CW/spoiler text, sensitive media)
    ========================================================================== */
 
+#refresh-generated-reply, #generated-reply-visibility {
+	display: block;
+}
+
+/* custom glyph visibility aliases */
+.glyphicon-globe:before, .glyphicon-public:before {
+	content:"\e135"
+}
+
+.glyphicon-eye-close:before, .glyphicon-unlisted:before {
+	content:"\e106"
+}
+
+.glyphicon-lock:before, .glyphicon-private:before {
+	content:"\e033"
+}
+
+.glyphicon-envelope:before, .glyphicon-direct:before {
+	content:"\2709"
+}
+
 .expanding-wrapper {
   max-height: 800px;
   width: 100%;

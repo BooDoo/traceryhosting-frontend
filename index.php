@@ -179,6 +179,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 			<p>We also offer some Mastodon-specific features:
 			<ul>
+				<li>Set visbility for your post with <code>{public}</code>, <code>{unlisted}</code>, <code>{private}</code>, or <code>{direct}</code></li>
 				<li>Put your status behind a CW that reads <em>Food [+]</em> like this: <code>{cut Food \\[+\\]}</code></li>
 				<li>Use <code>{alt a description of the image}</code> near an <code>{img…}</code> or <code>{svg…}</code> tag to assist folks using screen readers.
 				<li>Use <code>{show}</code> anywhere to override your default and have your media shown for that post</li>
@@ -245,7 +246,7 @@ for (var i = orgs.children.length; i >= 0; i--) {
 	<div class="col-md-12">
 		<div class="pull-right pad-left">
 		<button type="button" id="refresh-generated-status" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-		<button type="button" id="post-generated-status" class="btn btn-post">Post!</button>
+		<button type="button" id="post-generated-status" class="btn btn-post">Post! <span id="generated-status-visibility" class="glyphicon"></span></button>
 		</div>
 		<div id="generated-status" style="overflow: auto;" class="well well-sm">-----
 		<div id="status-media"> 
@@ -363,7 +364,8 @@ for (var i = orgs.children.length; i >= 0; i--) {
 	<div id="replyrules-validator" class="alert alert-danger hidden" role="alert">Parsing error</div>
 		Test mention: <textarea class="form-control" rows="1" id="test_mention" name="test_mention">@<?php echo($result['username']) ?> </textarea>
 		<div class="pull-right pad-left"><br>
-	<button type="button" id="refresh-generated-reply" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+		<button type="button" id="refresh-generated-reply" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+		<button type="button" id="generated-reply-visibility" title="" class="btn disabled glyphicon"></button>
 		</div>
 		Response:<div id="generated-reply" style="overflow: auto;" class="well well-sm">-----
 		<div id="reply-media"> 
