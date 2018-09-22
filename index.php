@@ -364,8 +364,8 @@ for (var i = orgs.children.length; i >= 0; i--) {
 	<div id="replyrules-validator" class="alert alert-danger hidden" role="alert">Parsing error</div>
 		Test mention: <textarea class="form-control" rows="1" id="test_mention" name="test_mention">@<?php echo($result['username']) ?> </textarea>
 		<div class="pull-right pad-left"><br>
-		<button type="button" id="refresh-generated-reply" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-		<button type="button" id="generated-reply-visibility" title="" class="btn disabled glyphicon"></button>
+		<button type="button" id="refresh-generated-reply" class="btn btn-block btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+		<button type="button" id="generated-reply-visibility" title="" class="btn btn-block disabled glyphicon"></button>
 		</div>
 		Response:<div id="generated-reply" style="overflow: auto;" class="well well-sm">-----
 		<div id="reply-media"> 

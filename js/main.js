@@ -366,8 +366,8 @@ var generate_reply = function()
 			};
 
 			// set visibilty glyph for reply
-			document.getElementById('generated-reply-visibility').className = "btn disabled glyphicon glyphicon-" + visibility;
-			document.getElementById('generated-reply-visibility').title = "Reply would post with '" + visibility + "' visibility";
+			document.getElementById('generated-reply-visibility').className = "btn btn-block disabled glyphicon glyphicon-" + visibility;
+			document.getElementById('generated-reply-visibility').title = "with '" + visibility + "' visibility";
 		}
 
 	}
@@ -519,7 +519,7 @@ var generate = function()
 			};
 
 			// Set visibility indication on Post button
-			document.getElementById("post-generated-status").title = "Post status with '" + visibility + "' visibility";
+			document.getElementById("generated-status-visibility").title = "with '" + visibility + "' visibility";
 			document.getElementById("generated-status-visibility").className = "glyphicon glyphicon-" + visibility;
 
 			valid = true;

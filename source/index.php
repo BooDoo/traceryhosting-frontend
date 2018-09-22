@@ -128,10 +128,17 @@ else
     <select class="form-control" id="is_sensitive" name="is_sensitive" style="display: none;">
       <option value="0">Innocuous</option><option value="1">Sensitive</option>
     </select>
+    <select class="form-control" id="visibility" name="visibility" style="display: none;">
+	<option value="public">Public</option>
+	<option value="unlisted">Unlisted</option>
+	<option value="private">Private</option>
+	<option value="direct">Direct</option>
+    </select>
     <div class="row">
     <div class="col-md-12">
       <div class="pull-right pad-left">
-    <button type="button" id="refresh-generated-status" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+    <button type="button" id="refresh-generated-status" class="btn btn-block btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+    <button type="button" class="btn btn-block disabled" disabled><span id="generated-status-visibility" class="glyphicon" title=""></span></button>
     </div>
       <div id="generated-status" style="overflow: auto;" class="well well-sm">-----
         <div id="status-media"> 
@@ -212,6 +219,7 @@ if ($result['does_replies'] === "1")
 	<script type="text/javascript">
 		var url = "<?php echo($result['url'])?>";
 		document.getElementById('is_sensitive').value = <?php echo($result['is_sensitive'])?>;
+		document.getElementById('visibility').value = <?php echo($result['visibility'])?>;
 	</script>
     </body>
 </html>
