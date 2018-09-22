@@ -367,7 +367,7 @@ var generate_reply = function()
 
 			// set visibilty glyph for reply
 			document.getElementById('generated-reply-visibility').className = "btn disabled glyphicon glyphicon-" + visibility;
-			document.getElementById('generated-reply-visibility').title = "Reply would post with '" + visibility + "' visibility';
+			document.getElementById('generated-reply-visibility').title = "Reply would post with '" + visibility + "' visibility";
 		}
 
 	}
