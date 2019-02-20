@@ -109,7 +109,7 @@ if (!isset($_SESSION['url']))
 		<ul id="shuffle">
 		<!-- <h3 style=>NONE YET.</h3> -->
 		<li><a href="https://botsin.space/@levels_check">@levels_check</a> <a href="<?=APP_ROOT ?>/source/?url=https://botsin.space/@levels_check">(source)</a></li>
-		<li><a href="https://botsin.space/@bodega">@bodega</a> <a href="//<?=APP_ROOT ?>/source/?url=https://botsin.space/@bodega">(source)</a></li>
+		<li><a href="https://botsin.space/@bodega">@bodega</a> <a href="<?=APP_ROOT ?>/source/?url=https://botsin.space/@bodega">(source)</a></li>
 		<li><a href="https://botsin.space/@bratsinspace">@bratsinspace</a> <a href="<?=APP_ROOT ?>/source/?url=https://botsin.space/@bratsinspace">(source)</a></li>
 		<li><a href="https://botsin.space/@thetinygallery">@thetinygallery</a> <a href="<?=APP_ROOT ?>/source/?url=https://botsin.space/@thetinygallery">(source)</a></li>
 		<li><a href="https://botsin.space/@EthanMarsDad">@EthanMarsDad</a> <a href="<?=APP_ROOT ?>/source/?url=https://botsin.space/@EthanMarsDad">(source)</a></li>
