@@ -79,7 +79,19 @@ if (!isset($_SESSION['url']))
 
 			<p>To use this, create an account for your bot to use on a bot-friendly Mastodon instance (such as <a href="https://botsin.space/auth/sign_up">botsin.space</a>) then fill in your instance down below to get started. If you're having trouble with a particular instance, feel free to let me know at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.<br><br> 
 			Bots are written in <a href="http://www.brightspiral.com">Tracery</a>, a tool for writing generative grammars developed by <a href="http://www.galaxykate.com/">Kate Compton</a>.<br>
-					The original <a href="https://cheapbotsdonequick.com/">CheapBotsDoneQuick.com</a> was created by <a href="https://v21.io">George Buckenham</a> - they have <a href="https://www.patreon.com/v21">a Patreon</a>, I do not.</p>
+					The original <a href="https://cheapbotsdonequick.com/">CheapBotsDoneQuick.com</a> was created by <a href="https://v21.io">V Buckenham</a> - they have <a href="https://www.patreon.com/v21">a Patreon</a>, I do not.</p>
+			<br>
+			<p>In lieu of helping pay for server costs, maintenance and further development, please consider
+				<details id="charity_list"><summary><a>Supporting a charity</a></summary>
+					<ul id="charities">
+						<li><a href="https://barcc.org/join/donation">Boston Area Rape Crisis Center (BARCC)</a></li>
+						<li><a href="https://secure.thebronxfreedomfund.org/page/contribute/donate">The Bronx Freedom Fund</a></li>
+						<li><a href="https://www.msf.org/donate">Médecins Sans Frontières (Doctors Without Borders)</a></li>
+						<li><a href="https://www.weareplannedparenthood.org">Planned Parenthood</a></li>
+						<li><a href="https://www.transyouthequality.org/#block-yui_3_17_2_2_1447266818747_13555">Trans Youth Equality Foundation (TYEF)</li>
+						<li><a href="https://vocal.ourpowerbase.net/civicrm/contribute/transact?id=6">VOCAL New York</a></li>
+					</ul>
+				</details>
 			</p>
 			</div>
 		</div>
@@ -208,12 +220,6 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 				</details>
 			</p>
 			</div>
-<script type="text/javascript">
-var orgs = document.getElementById("charities");
-for (var i = orgs.children.length; i >= 0; i--) {
-	orgs.appendChild(orgs.children[Math.random() * i | 0]);
-}
-</script>
 		</div>
 		
 		<br><br>
@@ -422,6 +428,12 @@ for (var i = orgs.children.length; i >= 0; i--) {
 		<script src="js/jsonlint.js"></script>
 		<script src="js/main.js"></script>
 		<script type="text/javascript">var url = `<?php echo($result['url'])?>`</script>
+		<script type="text/javascript">
+			var orgs = document.getElementById("charities");
+			for (var i = orgs.children.length; i >= 0; i--) {
+				orgs.appendChild(orgs.children[Math.random() * i | 0]);
+			}
+		</script>
 	</body>
 </html>
 
