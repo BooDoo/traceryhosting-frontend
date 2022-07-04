@@ -85,9 +85,9 @@ if (!isset($_SESSION['url']))
 				<details id="charity_list"><summary><a>Supporting a charity</a></summary>
 					<ul id="charities">
 						<li><a href="https://barcc.org/join/donation">Boston Area Rape Crisis Center (BARCC)</a></li>
-						<li><a href="https://secure.thebronxfreedomfund.org/page/contribute/donate">The Bronx Freedom Fund</a></li>
+						<li><a href="https://bailproject.org/donate">The Bail Project</a></li>
 						<li><a href="https://www.msf.org/donate">Médecins Sans Frontières (Doctors Without Borders)</a></li>
-						<li><a href="https://www.weareplannedparenthood.org">Planned Parenthood</a></li>
+						<li><a href="https://abortionfunds.org/donate">National Network of Abortion Funds</a></li>
 						<li><a href="https://www.transyouthequality.org/#block-yui_3_17_2_2_1447266818747_13555">Trans Youth Equality Foundation (TYEF)</li>
 						<li><a href="https://vocal.ourpowerbase.net/civicrm/contribute/transact?id=6">VOCAL New York</a></li>
 					</ul>
@@ -211,9 +211,9 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 				<details id="charity_list"><summary><a>Supporting a charity</a></summary>
 					<ul id="charities">
 						<li><a href="https://barcc.org/join/donation">Boston Area Rape Crisis Center (BARCC)</a></li>
-						<li><a href="https://secure.thebronxfreedomfund.org/page/contribute/donate">The Bronx Freedom Fund</a></li>
+						<li><a href="https://bailproject.org/donate">The Bail Project</a></li>
 						<li><a href="https://www.msf.org/donate">Médecins Sans Frontières (Doctors Without Borders)</a></li>
-						<li><a href="https://www.weareplannedparenthood.org">Planned Parenthood</a></li>
+						<li><a href="https://abortionfunds.org/donate">National Network of Abortion Funds</a></li>
 						<li><a href="https://www.transyouthequality.org/#block-yui_3_17_2_2_1447266818747_13555">Trans Youth Equality Foundation (TYEF)</li>
 						<li><a href="https://vocal.ourpowerbase.net/civicrm/contribute/transact?id=6">VOCAL New York</a></li>
 					</ul>
