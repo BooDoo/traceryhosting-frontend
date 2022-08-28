@@ -23,9 +23,9 @@ if (isset($_SESSION['bearer_token']))
 	{
 		//todo validate json here
 		//TODO use url instead of token? tokens may have collision
-		$stmt = $pdo->prepare('UPDATE traceries SET frequency=:frequency, tracery=:tracery, public_source=:public_source, is_sensitive=:is_sensitive, does_replies=:does_replies, reply_rules=:reply_rules, last_updated=now() WHERE bearer=:bearer');
+		$stmt = $pdo->prepare('UPDATE traceries SET frequency=:frequency, tracery=:tracery, public_source=:public_source, is_sensitive=:is_sensitive, visibility=:visibility, does_replies=:does_replies, reply_rules=:reply_rules, last_updated=now() WHERE bearer=:bearer');
 
-	  	$stmt->execute(array('frequency' => $_POST['frequency'], 'tracery' => $_POST['tracery'],'public_source' => $_POST['public_source'], 'is_sensitive' => $_POST['is_sensitive'], 'does_replies' => $_POST['does_replies'],'reply_rules' => $_POST['reply_rules'], 'bearer' => $_SESSION['bearer_token']));
+	  	$stmt->execute(array('frequency' => $_POST['frequency'], 'tracery' => $_POST['tracery'],'public_source' => $_POST['public_source'], 'is_sensitive' => $_POST['is_sensitive'], 'visibility' => $_POST['visibility'], 'does_replies' => $_POST['does_replies'],'reply_rules' => $_POST['reply_rules'], 'bearer' => $_SESSION['bearer_token']));
 
 	  	if ($stmt->rowCount() == 1)
 	  	{
