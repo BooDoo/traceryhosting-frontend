@@ -421,7 +421,7 @@ var generate = function()
 			{
 				$(`#${statusId}`).addClass('too-long');
 
-				$(`#${postButtonId}`).attr('disabled','disabled').addClass('disabled');
+				// $(`#${postButtonId}`).attr('disabled','disabled').addClass('disabled');
 			}
 			else
 			{
