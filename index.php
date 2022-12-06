@@ -103,9 +103,10 @@ if (!isset($_SESSION['url']))
 			<label for="instance-domain">https://</label>
 			<input value="" placeholder="botsin.space" list="instance-domains" id="instance-domain" class="form-control" type="text">
 			<datalist id="instance-domains">
+			<option>botsin.space</option>
 		<?php
-			$domains = $pdo->query('SELECT domain FROM instances')->fetchAll();
-			foreach ($domains as $n => $row) { echo ("         <option>{$row['domain']}</option>\n"); }
+			$domains = $pdo->query('SELECT DISTINCT instance FROM traceries WHERE frequency > 0')->fetchAll();
+			foreach ($domains as $n => $row) { echo ("         <option>{$row['instance']}</option>\n"); }
 		?>
 			</datalist>
 			<a href="#" onclick="this.href='/signin.php?instance_domain='+(document.getElementById('instance-domain').value || 'botsin.space'); return true;">
