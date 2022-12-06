@@ -96,9 +96,10 @@ if (!isset($_SESSION['url']))
 			</div>
 		</div>
 		
-		<br><br>
+		<br>
 	<div class="col-md-6 col-md-offset-3 form-inline">
 		<div class="form-group">
+			<p><strong>⚠ ONLY the instance domain! If using <a href="https://botsin.space" title="Bots in Space">botsin.space</a>, just click the button!</strong></p>
 			<label for="instance-domain">https://</label>
 			<input value="" placeholder="botsin.space" list="instance-domains" id="instance-domain" class="form-control" type="text">
 			<datalist id="instance-domains">
