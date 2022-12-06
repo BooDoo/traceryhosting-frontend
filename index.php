@@ -104,10 +104,7 @@ if (!isset($_SESSION['url']))
 			<input value="" placeholder="botsin.space" list="instance-domains" id="instance-domain" class="form-control" type="text">
 			<datalist id="instance-domains">
 			<option>botsin.space</option>
-		<?php
-			$domains = $pdo->query('SELECT DISTINCT instance FROM traceries WHERE frequency > 0')->fetchAll();
-			foreach ($domains as $n => $row) { echo ("         <option>{$row['instance']}</option>\n"); }
-		?>
+			<option>mastodon.social</option>
 			</datalist>
 			<a href="#" onclick="this.href='/signin.php?instance_domain='+(document.getElementById('instance-domain').value || 'botsin.space'); return true;">
 				<button class="btn btn-default" id="signin-button">
