@@ -185,7 +185,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 			<p>To generate images within CBTS, you can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVGs</a>. SVGs will need to specify a <code>width</code> and <code>height</code> attribute, and should declare the appropriate namespaces. The format would look something like:<br>
 			<code>{svg &lt;svg xmlns='http://www.w3.org/2000/svg' width='#svgWidth#' height='#svgHeight#'...&gt; ... &lt;/svg&gt;}</code><br>
-			Within SVG, <code>"</code>s need to be escaped as <code>\"</code>, and <code>#</code>s as <code>\\#</code>. <code>{</code>s and <code>}</code>s are escaped as <code>\\\\{</code> and <code>\\\\}</code>.<br>
+			Within SVG, <code>"</code>s need to be escaped as <code>\"</code>, and <code>#</code>s as <code>\\#</code>. <code>{</code>s and <code>}</code>s are escaped as <code>\\\\\\\\{</code> and <code>\\\\}</code>, respectively.<br>
 			A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>.</p>
 
 			<p>We also offer some Mastodon-specific features:

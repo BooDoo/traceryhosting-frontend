@@ -393,7 +393,12 @@ var generate = function()
 	processedGrammar = null;
 	var string = $('textarea#tracery').val();
 	try{
-		var parsed = jQuery.parseJSON(string);
+		// var parsed = jQuery.parseJSON(string);
+		var parsed = jQuery.parseJSON(string.replace(/\\{8}/g, '\\\\\\\\'));
+		// ^^^ hideous, right? it's a quick hack so backend-friendly Tracery2 escaping works in
+		// the frontend's Tracery1 implementation.
+		// Enables e.g. <style>.label {font-family: 'Source Code Pro'}</style> within SVG block.
+
 		try
 		{
 			const VISIBILITIES = ["public", "unlisted", "private", "direct"];
