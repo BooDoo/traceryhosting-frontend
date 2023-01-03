@@ -100,15 +100,60 @@ $(window).load(function() {
 var valid = true;
 var replyrules_valid = true;
 
+const FOCUS_KEYWORDS = initFocusKeywords();
+
 nl2br = function (str, is_xhtml) {   
 	var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
 	return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 };
 
+function initFocusKeywords() {
+  const keywords = {};
+    keywords.topleft     = keywords.xminymin = [-1.0,1.0];
+    keywords.top         = keywords.xmidymin = [0.0,1.0];
+    keywords.topright    = keywords.xmaxymin = [1.0,1.0];
+    keywords.left        = keywords.xminymid = [-1.0,0.0];
+    keywords.center      = keywords.xmidymid = [0.0,0.0];
+    keywords.right       = keywords.xmaxymid = [1.0,0.0];
+    keywords.bottomleft  = keywords.xminymax = [-1.0,-1.0];
+    keywords.bottom      = keywords.xmidymax = [0.0,-1.0];
+    keywords.bottomright = keywords.xmaxymax = [1.0,-1.0];
+
+  return keywords;
+}
+
+// Take a string and either map from keyword,
+// or parse arbitrarily long comma-separated string and
+// return arr[x,y] with values bounded btwn -1.0,1.0 (defaults: 0.0)
+
+function parseFocusString (focusValues) {
+  const [FOCUS_MIN, FOCUS_MAX] = [-1.0, 1.0];
+
+  let parsedFocusValues;
+  let parsedKeyword = FOCUS_KEYWORDS[focusValues.toLowerCase().replace(/[\s-_,]/g,"")];
+
+  if (parsedKeyword) {
+      parsedFocusValues = parsedKeyword;                // nice! you used a keyword!
+  } else {
+      parsedFocusValues = _.chain(focusValues).         // oh no, you didn't use a keyword...
+	split(','). 					// separate at comma
+	map(v=> _.trim(v," ,;:=_") ).   		// trim junk characters
+	reject(_.isEmpty).				// must have content
+	map(parseFloat).               			// coerce into Number OR NaN
+	without(NaN).	                  		// remove NaN
+	map(v=> _.clamp(v, FOCUS_MIN, FOCUS_MAX) ).	// keep within useable range
+	value();
+  }
+
+  let [x = 0.0, y = 0.0] = parsedFocusValues    // only take first two values
+  return [x,y];                                 // pass back a useable [x,y] array
+}
+
+
 // Returns a "tagObject" like: {img: `https://imgur.com/21324567`} or {cut: `uspol`}
 var prepareTag = function(tag) {
-	const knownTags = ["img", "svg", "cut", "alt", "hide", "show", "public", "unlisted", "private", "direct"];
-	let match = tag.match(/^\{((?:img|svg|cut|alt) |hide|show|public|unlisted|private|direct)(.*)\}/);
+	const knownTags = ["img", "svg", "cut", "alt", "hide", "show", "public", "unlisted", "private", "direct", "focus"];
+	let match = tag.match(/^\{((?:img|svg|cut|alt|focus) |hide|show|public|unlisted|private|direct)(.*)\}/);
 	if ( match && match[1] && _.includes(knownTags, match[1].trim()) ) {
 		let tagType = match[1].trim();
 		let tagContent = match[2];
@@ -282,8 +327,9 @@ var generate_reply = function()
 			{
 
 				let medias = [];
-				let cw_label = null;
 				let alt_tags = [];
+				let focus_tags = [];
+				let cw_label = null;
 				let meta_visibility = null;
 				let hide_media = null;
 				let show_media = null;
@@ -291,6 +337,7 @@ var generate_reply = function()
 				cw_label = _.find(meta_tags, tagObject=> _.has(tagObject, "cut")); // we take the first CUT, or leave it undefined
 				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
+				focus_tags = meta_tags.filter(tagObject=> _.has(tagObject, "focus")); // we take all FOCUS tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
 				meta_visibility = _.findLast(VISIBILITIES, vis=>
@@ -342,12 +389,16 @@ var generate_reply = function()
 				}
 
 				_.each(medias, (tagObject, index)=> {
-					let tagType, tagContent, description;
+					let tagType, tagContent, description, focus;
 					[tagType, tagContent] = _.toPairs(tagObject)[0];
 
 					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
 					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined
 					description = _.escape(description);
+
+					focus = focus_tags[_.min([index, focus_tags.length-1])]; // pair media content with focus tag (if present)
+					if (_.has(focus, "focus")) { focus = parseFocusString(focus.focus).join(','); }
+					//TODO: Visualize the selected focus point?
 
 					if (tagType === "svg") {
 						var parser = new DOMParser();
@@ -441,8 +492,9 @@ var generate = function()
 				console.dir(meta_tags);
 
 				let medias = [];
-				let cw_label = null;
 				let alt_tags = [];
+				let focus_tags = [];
+				let cw_label = null;
 				let meta_visibility = null;
 				let hide_media = null;
 				let show_media = null;
@@ -450,6 +502,7 @@ var generate = function()
 				cw_label = _.find(meta_tags, tagObject=> _.has(tagObject, "cut")); // we take the first CUT, or leave it undefined
 				if (cw_label) { cw_label = _.escape(cw_label['cut']) };
 				alt_tags = meta_tags.filter(tagObject=> _.has(tagObject, "alt")); // we take all ALT tags, in sequence
+				focus_tags = meta_tags.filter(tagObject=> _.has(tagObject, "focus")); // we take all FOCUS tags, in sequence
 				medias = meta_tags.filter(tagObject=>_(["img","svg"]).includes(Object.keys(tagObject)[0])); // we take all IMG or SVG tags, in sequence
 
 				meta_visibility = _.findLast(VISIBILITIES, vis=>
@@ -500,12 +553,16 @@ var generate = function()
 				}
 
 				_.each(medias, (tagObject, index)=> {
-					let tagType, tagContent, description;
+					let tagType, tagContent, description, focus;
 					[tagType, tagContent] = _.toPairs(tagObject)[0];
 
 					description = alt_tags[_.min([index, alt_tags.length-1])]; // pair media content with alt tag (if present)
 					if (_.has(description, "alt")) { description = description.alt; } // or fallback to undefined
 					description = _.escape(description);
+
+					focus = focus_tags[_.min([index, focus_tags.length-1])]; // pair media content with focus tag (if present)
+					if (_.has(focus, "focus")) { focus = parseFocusString(focus.focus).join(','); }
+					//TODO: Visualize selected focal point
 
 					if (tagType === "svg") {
 						var parser = new DOMParser();
