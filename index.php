@@ -239,7 +239,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 		}
 		else
 		{
-			echo(htmlspecialchars($result['tracery'], 'ENT_HTML5' | ENT_QUOTES , "UTF-8")); /*todo : XSS vuln? */
+			echo(htmlspecialchars($result['tracery'], ENT_HTML5 | ENT_QUOTES , "UTF-8")); /*todo : XSS vuln? */
 		}
 ?>
 
@@ -359,7 +359,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 		}
 		else
 		{
-			echo(htmlspecialchars($result['reply_rules'], 'ENT_HTML5' | ENT_QUOTES , "UTF-8")); 
+			echo(htmlspecialchars($result['reply_rules'], ENT_HTML5 | ENT_QUOTES , "UTF-8"));
 		}
 ?>
 
