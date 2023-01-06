@@ -193,6 +193,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 				<li>Set visbility for your post with <code>{public}</code>, <code>{unlisted}</code>, <code>{private}</code>, or <code>{direct}</code></li>
 				<li>Put your status behind a CW that reads <em>Food [+]</em> like this: <code>{cut Food \\[+\\]}</code></li>
 				<li>Use <code>{alt a description of the image}</code> near an <code>{img…}</code> or <code>{svg…}</code> tag to assist folks using screen readers.
+				<li>Use <code>{focus topleft|top|topright|left|center|right|bottomleft|bottom|bottomright}</code> near an <code>{img…}</code> or <code>{svg…}</code> tag to set where cropped image preview is focused.</li>
 				<li>Use <code>{show}</code> anywhere to override your default and have your media shown for that post</li>
 				<li>Use <code>{hide}</code> anywhere in your generated status to flag your media as sensitive (this overrules <code>{show}</code>)</li>
 			</ul>
