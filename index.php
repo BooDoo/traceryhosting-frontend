@@ -178,7 +178,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 		<br>
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
-			<p>Bots are written in <a href="http://brightspiral.com/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then post it on a fixed schedule. If it generates a duplicate status, or a status over 280 characters, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
+			<p>Bots are written in <a href="http://brightspiral.com/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then post it on a fixed schedule. If it generates a duplicate status or runs into some other issue, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
 
 			<p>You can also include images in your stauses. The simplest way to do this is to specify a URL, like so:<br>
 			<code>{img https://placeimg.com/640/480/animals/image.jpg}</code></p>
@@ -186,7 +186,11 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 			<p>To generate images within CBTS, you can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVGs</a>. SVGs will need to specify a <code>width</code> and <code>height</code> attribute, and should declare the appropriate namespaces. The format would look something like:<br>
 			<code>{svg &lt;svg xmlns='http://www.w3.org/2000/svg' width='#svgWidth#' height='#svgHeight#'...&gt; ... &lt;/svg&gt;}</code><br>
 			Within SVG, <code>"</code>s need to be escaped as <code>\"</code>, and <code>#</code>s as <code>\\#</code>. <code>{</code>s and <code>}</code>s are escaped as <code>\\\\\\\\{</code> and <code>\\\\}</code>, respectively.<br>
-			A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>.</p>
+
+			A good simple example to start from is the source of <a href="//cheapbotsdonequick.com/source/hashfacade">@hashfacade</a>.<br>Something a little more involved would be <a href="//cheapbotsdonequick.com/source/time4gametheory">@time4gametheory</a>.</p>
+
+			<p class="alert alert-danger">For imgur hosted pictures, please source them as <em>https://<strong>i.</strong>imgur.com/someURL</em></p>
+
 
 			<p>We also offer some Mastodon-specific features:
 			<ul>
