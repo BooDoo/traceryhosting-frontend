@@ -78,7 +78,7 @@ if (!isset($_SESSION['url']))
 		</p>
 
 			<p>To use this, create an account for your bot to use on a bot-friendly Mastodon instance (such as <a href="https://botsin.space/auth/sign_up">botsin.space</a>) then fill in your instance down below to get started. If you're having trouble with a particular instance, feel free to let me know at <a href="https://mastodon.social/@boodoo">@boodoo@m.s</a> or <a href="https://twitter.com/boodooperson">@boodooperson</a> on the birdsite.<br><br> 
-			Bots are written in <a href="http://www.brightspiral.com">Tracery</a>, a tool for writing generative grammars developed by <a href="http://www.galaxykate.com/">Kate Compton</a>.<br>
+			Bots are written in <a href="http://tracery.io">Tracery</a>, a tool for writing generative grammars developed by <a href="http://www.galaxykate.com/">Kate Compton</a>.<br>
 					The original <a href="https://cheapbotsdonequick.com/">CheapBotsDoneQuick.com</a> was created by <a href="https://v21.io">V Buckenham</a> - they have <a href="https://www.patreon.com/v21">a Patreon</a>, I do not.</p>
 			<br>
 			<p>In lieu of helping pay for server costs, maintenance and further development, please consider
@@ -178,7 +178,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 		<br>
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
-			<p>Bots are written in <a href="http://brightspiral.com/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then post it on a fixed schedule. If it generates a duplicate status or runs into some other issue, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
+			<p>Bots are written in <a href="https://tracery.io/">Tracery</a>, a generative grammar specified as a <a href="http://www.tutorialspoint.com/json/json_syntax.htm">JSON</a> string. This site will automatically expand your text, starting from the "origin" node, and then post it on a fixed schedule. If it generates a duplicate status or runs into some other issue, it will retry up to 5 times. Line breaks can be entered with the special sequence <code>\n</code>, and hashtags with <code>\\#</code>.</p>
 
 			<p>You can also include images in your stauses. The simplest way to do this is to specify a URL, like so:<br>
 			<code>{img https://placeimg.com/640/480/animals/image.jpg}</code></p>
