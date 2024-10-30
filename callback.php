@@ -58,7 +58,7 @@ if ( (!isset($_GET['code']) || !isset($res)) ) {
     login_failure();
 }
 
-$auth_code = $_GET['code'];	
+$auth_code = $_GET['code'];
 $connection = new \theCodingCompany\Mastodon($instance_domain);
 $connection->setCredentials(array(
 	"client_id" => $res['client_id'],
